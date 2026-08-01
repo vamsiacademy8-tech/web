@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           (extractedPhone && sPhone === extractedPhone) ||
           (data.email && data.email.toLowerCase() === userEmail)
         ) {
-          foundStudent = { id: d.id, ...data };
+          foundStudent = { ...data, id: d.id };
         }
       });
 
