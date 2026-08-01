@@ -88,7 +88,6 @@ export function saveLocalAttemptDraft(
   studentId: string,
   data: {
     userAnswers: Record<string, string>;
-    reviewLater: string[];
     violationsCount: number;
     violationLogs: any[];
     updatedAt: string;
