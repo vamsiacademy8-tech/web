@@ -1,0 +1,10 @@
+{
+  "name": "Vamsi Academy Exam Portal",
+  "short_name": "Vamsi Exam",
+  "description": "Secure Online Examination Portal",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb"
+}

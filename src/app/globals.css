@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-500 selection:text-white;
+  }
+}
+
+/* Custom Utilities for Premium Vamsi Academy UI */
+.glass-panel {
+  @apply bg-white/85 backdrop-blur-md border border-slate-200/80 shadow-soft;
+}
+
+.glass-dark {
+  @apply bg-navy-800/90 backdrop-blur-md border border-slate-700/50 text-white shadow-card;
+}
+
+.brand-gradient {
+  @apply bg-gradient-to-r from-brand-700 via-brand-600 to-blue-500 text-white;
+}
+
+.brand-gradient-hover {
+  @apply hover:bg-gradient-to-r hover:from-brand-800 hover:via-brand-700 hover:to-blue-600 transition-all duration-300;
+}
+
+/* Strict Anti-cheating Utilities */
+.prevent-select {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+.no-drag {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
+
+/* Instant Zero-Latency Snipping Tool / Focus-Loss Blackout */
+body.window-blurred .exam-protected-content,
+body.window-blurred .prevent-select,
+body.window-blurred main,
+body.window-blurred canvas {
+  filter: brightness(0) blur(60px) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  background-color: #000000 !important;
+}
+
+/* Prevent PrintScreen / Screen Capture / Browser Printing */
+@media print {
+  body:not(.allow-print) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
