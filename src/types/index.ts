@@ -67,6 +67,7 @@ export type ViolationType =
   | 'screen_sharing_attempt'
   | 'devtools_opened'
   | 'multiple_tabs_detected'
+  | 'screenshot_attempt'
   | 'print_attempt';
 
 export interface AttemptViolation {
