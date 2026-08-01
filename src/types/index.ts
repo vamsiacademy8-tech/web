@@ -2,6 +2,7 @@ export type StudentStatus = 'active' | 'disabled';
 
 export interface StudentProfile {
   id: string; // Firebase Auth UID
+  authUid?: string; // Optional legacy field
   name: string;
   email: string;
   phone?: string;
