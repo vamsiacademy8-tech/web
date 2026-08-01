@@ -209,7 +209,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const data = d.data() as StudentProfile;
           const sId = (data.studentIdCode || '').trim();
           if (sId === cleanStudentId) {
-            preAddedStudent = { docId: d.id, id: d.id, ...data };
+            preAddedStudent = { ...data, docId: d.id, id: d.id };
           }
         });
       } catch (fsErr: any) {
