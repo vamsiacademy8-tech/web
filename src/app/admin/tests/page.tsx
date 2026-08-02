@@ -43,11 +43,9 @@ export default function AdminTestsPage() {
       const list: Test[] = [];
       for (const document of snap.docs) {
         const data = document.data() as Test;
-        const qSnap = await getDocs(collection(db, 'tests', document.id, 'questions'));
         list.push({
           ...data,
           id: document.id,
-          totalQuestions: qSnap.size,
         });
       }
       setTests(list);
@@ -218,7 +216,7 @@ export default function AdminTestsPage() {
                   </button>
 
                   <span className="text-xs font-mono font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-100">
-                    {test.totalQuestions || 0} Questions
+                    {test.questionCount || 0} Questions
                   </span>
                 </div>
 
@@ -241,7 +239,7 @@ export default function AdminTestsPage() {
                     <span className="flex items-center gap-1.5 text-slate-500">
                       <HelpCircle className="w-3.5 h-3.5" /> Questions
                     </span>
-                    <span className="font-bold text-brand-600">{test.totalQuestions || 0} Questions</span>
+                    <span className="font-bold text-brand-600">{test.questionCount || 0} Questions</span>
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
                     <span className="flex items-center gap-1.5 text-slate-500">
@@ -259,7 +257,7 @@ export default function AdminTestsPage() {
                   href={`/admin/tests/${test.id}/questions`}
                   className="w-full py-2.5 px-3 bg-brand-50 hover:bg-brand-100 text-brand-700 font-extrabold text-xs rounded-xl border border-brand-200 transition-all flex items-center justify-center gap-1.5"
                 >
-                  <HelpCircle className="w-4 h-4" /> Manage Questions ({test.totalQuestions || 0})
+                  <HelpCircle className="w-4 h-4" /> Manage Questions ({test.questionCount || 0})
                 </Link>
 
                 <div className="flex items-center justify-between gap-1 pt-1">

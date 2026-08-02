@@ -11,6 +11,8 @@ import {
   deleteDoc,
   writeBatch,
   getDoc,
+  updateDoc,
+  increment,
 } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Question, Test, QuestionOptionKey } from '@/types';
@@ -142,7 +144,11 @@ export default function QuestionManagementPage() {
         orderIndex: editingQuestion?.orderIndex ?? questions.length,
       };
 
+      const isNew = !editingQuestion;
       await setDoc(qRef, payload, { merge: true });
+      if (isNew) {
+        await updateDoc(doc(db, 'tests', testId), { questionCount: increment(1) });
+      }
       setIsQuestionModalOpen(false);
       await fetchTestAndQuestions();
     } catch (err) {
@@ -161,6 +167,7 @@ export default function QuestionManagementPage() {
       };
 
       await setDoc(doc(db, 'tests', testId, 'questions', newId), payload);
+      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(1) });
       await fetchTestAndQuestions();
     } catch (err) {
       console.error('Failed to duplicate question:', err);
@@ -171,6 +178,7 @@ export default function QuestionManagementPage() {
     if (!confirm('Are you sure you want to delete this question?')) return;
     try {
       await deleteDoc(doc(db, 'tests', testId, 'questions', id));
+      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(-1) });
       setQuestions((prev) => prev.filter((q) => q.id !== id));
     } catch (err) {
       console.error('Failed to delete question:', err);
@@ -185,6 +193,7 @@ export default function QuestionManagementPage() {
         batch.delete(doc(db, 'tests', testId, 'questions', q.id));
       });
       await batch.commit();
+      await updateDoc(doc(db, 'tests', testId), { questionCount: 0 });
       setQuestions([]);
     } catch (err) {
       console.error('Failed to bulk delete questions:', err);
@@ -204,6 +213,7 @@ export default function QuestionManagementPage() {
         });
       });
       await batch.commit();
+      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(newQuestions.length) });
       await fetchTestAndQuestions();
     } catch (err) {
       console.error('Failed batch question import:', err);

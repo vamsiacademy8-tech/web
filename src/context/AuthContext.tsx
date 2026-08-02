@@ -76,30 +76,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Student profile processing - search Firestore for pre-added record
     try {
-      const snap = await getDocs(collection(db, 'students'));
       let foundStudent: StudentProfile | null = null;
-
       // Extract possible studentIdCode and phone from auth email (e.g. s_100_9965490227@...)
       const match = userEmail.match(/^s_([a-z0-9]+)_([0-9]+)@/i);
       const extractedId = match ? match[1] : '';
-      const extractedPhone = match ? match[2] : '';
 
-      snap.forEach((d) => {
-        const data = d.data() as StudentProfile;
-        const sId = (data.studentIdCode || '').trim().toLowerCase();
-        const sPhone = (data.phone || '').replace(/[^0-9]/g, '');
-
-        if (
-          d.id === currentUser.uid ||
-          data.id === currentUser.uid ||
-          data.authUid === currentUser.uid ||
-          (extractedId && sId === extractedId.toLowerCase()) ||
-          (extractedPhone && sPhone === extractedPhone) ||
-          (data.email && data.email.toLowerCase() === userEmail)
-        ) {
-          foundStudent = { ...data, id: d.id };
+      if (extractedId) {
+        // Find by extracted studentIdCode
+        const q = query(
+          collection(db, 'students'),
+          where('studentIdCode', '==', extractedId)
+        );
+        const qSnap = await getDocs(q);
+        if (!qSnap.empty) {
+          const docSnap = qSnap.docs[0];
+          foundStudent = { ...(docSnap.data() as StudentProfile), id: docSnap.id };
         }
-      });
+      }
+
+      if (!foundStudent) {
+        // Fallback: lookup by Firebase Auth UID or email if it's a legacy or manually added account
+        const fallbackQuery = query(
+          collection(db, 'students'),
+          where('authUid', '==', currentUser.uid)
+        );
+        const fSnap = await getDocs(fallbackQuery);
+        if (!fSnap.empty) {
+          const docSnap = fSnap.docs[0];
+          foundStudent = { ...(docSnap.data() as StudentProfile), id: docSnap.id };
+        }
+      }
 
       if (foundStudent) {
         setProfile(foundStudent);
@@ -204,14 +210,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // 1. Fetch Student Records from Firestore to verify Admin Pre-Registration
       let preAddedStudent: (StudentProfile & { docId: string }) | null = null;
       try {
-        const snap = await getDocs(collection(db, 'students'));
-        snap.forEach((d) => {
-          const data = d.data() as StudentProfile;
-          const sId = (data.studentIdCode || '').trim();
-          if (sId === cleanStudentId) {
-            preAddedStudent = { ...data, docId: d.id, id: d.id };
-          }
-        });
+        const q = query(collection(db, 'students'), where('studentIdCode', '==', cleanStudentId));
+        const snap = await getDocs(q);
+        
+        if (!snap.empty) {
+          const docSnap = snap.docs[0];
+          preAddedStudent = { ...(docSnap.data() as StudentProfile), docId: docSnap.id, id: docSnap.id };
+        }
       } catch (fsErr: any) {
         console.error('Firestore pre-check error:', fsErr);
       }
