@@ -2,15 +2,18 @@
 
 import React, { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { usePathname } from 'next/navigation';
 
 export const GlobalSecurityWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAdmin } = useAuth();
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin || pathname?.startsWith('/admin')) {
       document.body.classList.remove('window-blurred');
       return;
     }
+
     
     // 1. Global Anti-Screenshot Keydown Listener
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -80,7 +83,7 @@ export const GlobalSecurityWrapper: React.FC<{ children: React.ReactNode }> = ({
       document.removeEventListener('contextmenu', handleContextMenu);
       document.body.classList.remove('window-blurred');
     };
-  }, [isAdmin]);
+  }, [isAdmin, pathname]);
 
   return <div className="min-h-screen">{children}</div>;
 };
