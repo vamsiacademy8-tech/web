@@ -8,7 +8,7 @@ import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { MonitorSmartphone } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -46,9 +46,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="bg-white p-8 rounded-3xl shadow-card max-w-sm border border-slate-200">
            <MonitorSmartphone className="w-16 h-16 text-brand-600 mx-auto mb-4" />
            <h2 className="text-2xl font-black text-slate-900 mb-3 leading-tight">Desktop<br/>Required</h2>
-           <p className="text-sm text-slate-600 font-medium leading-relaxed">
+           <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6">
              The Admin Control Center is designed for larger screens. Please log in from a laptop or desktop computer to manage your academy.
            </p>
+           <button 
+             onClick={logout}
+             className="w-full py-3 px-4 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 font-bold text-sm rounded-xl transition-colors border border-slate-200 hover:border-red-200"
+           >
+             Sign Out
+           </button>
         </div>
       </div>
 
