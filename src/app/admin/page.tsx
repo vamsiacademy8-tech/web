@@ -8,7 +8,7 @@ import {
   query,
   orderBy,
   limit,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Test, StudentProfile, Attempt } from '@/types';
 import { DashboardCards } from '@/components/admin/DashboardCards';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Attempt, Test } from '@/types';
 import { formatDateTime } from '@/lib/utils';

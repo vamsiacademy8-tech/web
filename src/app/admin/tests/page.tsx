@@ -9,7 +9,7 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Test } from '@/types';
 import { TestModal } from '@/components/admin/TestModal';

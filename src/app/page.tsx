@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Test, StudentProfile, Attempt } from '@/types';
 import { Navbar } from '@/components/ui/Navbar';

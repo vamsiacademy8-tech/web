@@ -9,7 +9,7 @@ import {
   collection,
   setDoc,
   updateDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import {

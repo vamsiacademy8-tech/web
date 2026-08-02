@@ -11,7 +11,7 @@ import {
   deleteDoc,
   writeBatch,
   getDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Question, Test, QuestionOptionKey } from '@/types';
 import { CSVQuestionImporter } from '@/components/admin/CSVQuestionImporter';

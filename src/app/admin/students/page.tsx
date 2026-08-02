@@ -8,7 +8,7 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { StudentProfile, StudentStatus } from '@/types';
 import { StudentModal } from '@/components/admin/StudentModal';
