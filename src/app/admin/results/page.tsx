@@ -35,13 +35,13 @@ export default function AdminResultsPage() {
         // Fetch Tests for Filter Dropdown
         const testsSnap = await getDocs(collection(db, 'tests'));
         const tList: Test[] = [];
-        testsSnap.forEach((d) => tList.push({ id: d.id, ...d.data() } as Test));
+        testsSnap.forEach((d) => tList.push({ ...d.data(), id: d.id } as Test));
         setTests(tList);
 
         // Fetch All Attempts (Sorted in-memory to prevent Firestore missing index errors)
         const attemptsSnap = await getDocs(collection(db, 'attempts'));
         const aList: Attempt[] = [];
-        attemptsSnap.forEach((d) => aList.push({ id: d.id, ...d.data() } as Attempt));
+        attemptsSnap.forEach((d) => aList.push({ ...d.data(), id: d.id } as Attempt));
         aList.sort((a, b) => new Date(b.startTime || 0).getTime() - new Date(a.startTime || 0).getTime());
         setAttempts(aList);
       } catch (err) {

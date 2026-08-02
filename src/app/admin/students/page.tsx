@@ -38,7 +38,7 @@ export default function AdminStudentsPage() {
       const snap = await getDocs(collection(db, 'students'));
       const list: StudentProfile[] = [];
       snap.forEach((d) => {
-        list.push({ id: d.id, ...d.data() } as StudentProfile);
+        list.push({ ...d.data(), id: d.id } as StudentProfile);
       });
       setStudents(list);
     } catch (err) {
