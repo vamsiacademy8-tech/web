@@ -39,7 +39,7 @@ const AuthContext = createContext<AuthContextType>({
 const isAuthorizedAdminEmail = (email: string) => {
   if (!email) return false;
   const clean = email.trim().toLowerCase();
-  return clean.includes('admin') || clean === 'flyggoagency@gmail.com' || clean.startsWith('flyggoagency');
+  return clean.includes('admin') || clean === 'flyggoagency@gmail.com' || clean.startsWith('flyggoagency') || clean === 'vamsiacademy@gmail.com';
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
