@@ -54,7 +54,7 @@ export interface Test {
   isPublished: boolean;
   shareCode: string; // Unique URL share code
   createdAt: string;
-  totalQuestions?: number;
+  questionCount?: number;
 }
 
 export type ViolationType = 
