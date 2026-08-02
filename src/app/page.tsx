@@ -20,9 +20,11 @@ import {
   CheckCircle,
   Award,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function StudentHomePage() {
   const { user, profile, isStudent, isAdmin, loginStudent, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [studentId, setStudentId] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -31,6 +33,12 @@ export default function StudentHomePage() {
   const [tests, setTests] = useState<Test[]>([]);
   const [completedTestIds, setCompletedTestIds] = useState<Set<string>>(new Set());
   const [testsLoading, setTestsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && user && isAdmin) {
+      router.push('/admin');
+    }
+  }, [user, isAdmin, authLoading, router]);
 
   // Fetch tests assigned to student (Optimized Spark Read)
   useEffect(() => {
@@ -118,7 +126,7 @@ export default function StudentHomePage() {
 
   const studentProfile = profile as StudentProfile;
 
-  if (authLoading) {
+  if (authLoading || (user && isAdmin)) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -134,7 +142,7 @@ export default function StudentHomePage() {
       <Navbar title="Student Examination Portal" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {!user ? (
+        {(!user || !isStudent) ? (
           /* Student Login View */
           <div className="max-w-md mx-auto my-12 bg-white rounded-3xl p-8 shadow-card border border-slate-200/80">
             <div className="text-center mb-8">
