@@ -215,6 +215,14 @@ export default function ExamPage() {
 
   // Fullscreen Enforcer
   useEffect(() => {
+    const isFullscreenSupported = !!document.documentElement.requestFullscreen;
+    
+    // Bypass fullscreen requirement for iOS Safari and unsupported browsers
+    if (!isFullscreenSupported) {
+      setIsFullscreen(true);
+      return;
+    }
+
     const handleFs = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };

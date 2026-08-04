@@ -89,7 +89,8 @@ export const AntiCheatingWrapper: React.FC<AntiCheatingWrapperProps> = ({
 
     // 8. Fullscreen Change Detection
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
+      const isFullscreenSupported = !!document.documentElement.requestFullscreen;
+      if (isFullscreenSupported && !document.fullscreenElement) {
         onViolation('fullscreen_exit', 'Exited fullscreen mode');
       }
     };
