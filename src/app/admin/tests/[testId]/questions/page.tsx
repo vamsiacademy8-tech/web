@@ -94,7 +94,7 @@ export default function QuestionManagementPage() {
     setOptC('');
     setOptD('');
     setCorrect('A');
-    setMarks(1);
+    setMarks(test?.marksPerQuestion || 1);
     setExplanation('');
     setImageUrl('');
     setIsQuestionModalOpen(true);
@@ -138,16 +138,23 @@ export default function QuestionManagementPage() {
         optionC: optC,
         optionD: optD,
         correctAnswer: correct,
-        marks: 1,
+        marks: Number(marks) || test?.marksPerQuestion || 1,
         explanation,
         imageUrl,
         orderIndex: editingQuestion?.orderIndex ?? questions.length,
       };
 
       const isNew = !editingQuestion;
+      const prevMarks = editingQuestion?.marks || 0;
+      const newMarks = Number(marks) || test?.marksPerQuestion || 1;
+      const markDiff = newMarks - (isNew ? 0 : prevMarks);
+
       await setDoc(qRef, payload, { merge: true });
-      if (isNew) {
-        await updateDoc(doc(db, 'tests', testId), { questionCount: increment(1) });
+      if (isNew || markDiff !== 0) {
+        const updateData: any = {};
+        if (isNew) updateData.questionCount = increment(1);
+        if (markDiff !== 0) updateData.maxMarks = increment(markDiff);
+        await updateDoc(doc(db, 'tests', testId), updateData);
       }
       setIsQuestionModalOpen(false);
       await fetchTestAndQuestions();
@@ -167,7 +174,10 @@ export default function QuestionManagementPage() {
       };
 
       await setDoc(doc(db, 'tests', testId, 'questions', newId), payload);
-      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(1) });
+      await updateDoc(doc(db, 'tests', testId), { 
+        questionCount: increment(1),
+        maxMarks: increment(q.marks || test?.marksPerQuestion || 1)
+      });
       await fetchTestAndQuestions();
     } catch (err) {
       console.error('Failed to duplicate question:', err);
@@ -177,8 +187,13 @@ export default function QuestionManagementPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this question?')) return;
     try {
+      const q = questions.find((x) => x.id === id);
+      const qMarks = q?.marks || test?.marksPerQuestion || 1;
       await deleteDoc(doc(db, 'tests', testId, 'questions', id));
-      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(-1) });
+      await updateDoc(doc(db, 'tests', testId), { 
+        questionCount: increment(-1),
+        maxMarks: increment(-qMarks)
+      });
       setQuestions((prev) => prev.filter((q) => q.id !== id));
     } catch (err) {
       console.error('Failed to delete question:', err);
@@ -193,7 +208,7 @@ export default function QuestionManagementPage() {
         batch.delete(doc(db, 'tests', testId, 'questions', q.id));
       });
       await batch.commit();
-      await updateDoc(doc(db, 'tests', testId), { questionCount: 0 });
+      await updateDoc(doc(db, 'tests', testId), { questionCount: 0, maxMarks: 0 });
       setQuestions([]);
     } catch (err) {
       console.error('Failed to bulk delete questions:', err);
@@ -213,7 +228,14 @@ export default function QuestionManagementPage() {
         });
       });
       await batch.commit();
-      await updateDoc(doc(db, 'tests', testId), { questionCount: increment(newQuestions.length) });
+      
+      let totalImportMarks = 0;
+      newQuestions.forEach(q => { totalImportMarks += Number(q.marks || test?.marksPerQuestion || 1); });
+
+      await updateDoc(doc(db, 'tests', testId), { 
+        questionCount: increment(newQuestions.length),
+        maxMarks: increment(totalImportMarks)
+      });
       await fetchTestAndQuestions();
     } catch (err) {
       console.error('Failed batch question import:', err);

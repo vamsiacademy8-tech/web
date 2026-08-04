@@ -55,6 +55,7 @@ export interface Test {
   shareCode: string; // Unique URL share code
   createdAt: string;
   questionCount?: number;
+  marksPerQuestion?: number;
 }
 
 export type ViolationType = 

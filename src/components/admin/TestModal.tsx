@@ -23,13 +23,12 @@ export const TestModal: React.FC<TestModalProps> = ({
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState('');
-  const [maxMarks, setMaxMarks] = useState(100);
+  const [marksPerQuestion, setMarksPerQuestion] = useState(1);
   const [passingMarks, setPassingMarks] = useState(40);
   const [randomizeQuestions, setRandomizeQuestions] = useState(false);
   const [randomizeOptions, setRandomizeOptions] = useState(false);
   const [allowBackNav, setAllowBackNav] = useState(true);
   const [showResultImmediately, setShowResultImmediately] = useState(true);
-  const [negativeMarking, setNegativeMarking] = useState(0.25);
   const [instructions, setInstructions] = useState(
     '1. Ensure you have a stable internet connection.\n2. Do not switch tabs or minimize the browser window during the test.\n3. Anti-cheating monitors tab switches and visibility loss.\n4. Click Submit when completed.'
   );
@@ -51,13 +50,12 @@ export const TestModal: React.FC<TestModalProps> = ({
           ? new Date(initialData.endDateTime).toISOString().slice(0, 16)
           : ''
       );
-      setMaxMarks(initialData.maxMarks || 100);
+      setMarksPerQuestion(initialData.marksPerQuestion || 1);
       setPassingMarks(initialData.passingMarks || 40);
       setRandomizeQuestions(initialData.randomizeQuestions ?? false);
       setRandomizeOptions(initialData.randomizeOptions ?? false);
       setAllowBackNav(initialData.allowBackNav ?? true);
       setShowResultImmediately(initialData.showResultImmediately ?? true);
-      setNegativeMarking(initialData.negativeMarking ?? 0.25);
       setInstructions(initialData.instructions || '');
       setShareCode(initialData.shareCode || generateShareCode());
     } else {
@@ -68,13 +66,12 @@ export const TestModal: React.FC<TestModalProps> = ({
       setDurationMinutes(60);
       setStartDateTime(now.toISOString().slice(0, 16));
       setEndDateTime(nextWeek.toISOString().slice(0, 16));
-      setMaxMarks(100);
+      setMarksPerQuestion(1);
       setPassingMarks(40);
       setRandomizeQuestions(false);
       setRandomizeOptions(false);
       setAllowBackNav(true);
       setShowResultImmediately(true);
-      setNegativeMarking(0.25);
       setShareCode(generateShareCode());
     }
   }, [initialData, isOpen]);
@@ -92,13 +89,14 @@ export const TestModal: React.FC<TestModalProps> = ({
         durationMinutes: Number(durationMinutes),
         startDateTime: new Date(startDateTime).toISOString(),
         endDateTime: new Date(endDateTime).toISOString(),
-        maxMarks: Number(maxMarks),
+        marksPerQuestion: Number(marksPerQuestion),
+        maxMarks: Number(marksPerQuestion) * (initialData?.questionCount || 0),
         passingMarks: Number(passingMarks),
         randomizeQuestions: true,
         randomizeOptions: false,
         allowBackNav: false,
         showResultImmediately: true,
-        negativeMarking: Number(negativeMarking),
+        negativeMarking: 0,
         instructions,
         shareCode: shareCode || generateShareCode(),
         isPublished: initialData?.isPublished ?? false,
@@ -172,6 +170,19 @@ export const TestModal: React.FC<TestModalProps> = ({
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(Number(e.target.value))}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1 flex items-center gap-1">
+                 Marks per Question
+              </label>
+              <input
+                type="number"
+                required
+                min={1}
+                value={marksPerQuestion}
+                onChange={(e) => setMarksPerQuestion(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-mono"
               />
             </div>
             <div>

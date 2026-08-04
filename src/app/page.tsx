@@ -305,9 +305,9 @@ export default function StudentHomePage() {
                           </p>
 
                           <div className="space-y-2 text-xs text-slate-600 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                            <div className="flex items-center gap-2">
-                              <Award className="w-4 h-4 text-brand-500 shrink-0" />
-                              <span>Total Marks: <strong className="text-brand-600 text-sm">{test.maxMarks}</strong></span>
+                            <div className="flex items-center gap-2 mb-2 p-2 bg-brand-50/50 rounded-xl border border-brand-100/50">
+                              <Award className="w-5 h-5 text-brand-600 shrink-0" />
+                              <span className="text-sm font-bold text-slate-700">Total Marks: <strong className="text-brand-600 text-lg ml-1 font-black">{test.maxMarks}</strong></span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-slate-400 shrink-0" />
