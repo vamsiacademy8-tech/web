@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Navbar } from '@/components/ui/Navbar';
 import { ShieldCheck, LogIn, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -114,6 +115,18 @@ export default function AdminLoginPage() {
               {loading ? 'Authenticating...' : 'Access Admin Dashboard'}
             </button>
           </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-sm text-slate-500 font-medium mb-2">
+              Are you a student looking for an exam?
+            </p>
+            <Link 
+              href="/"
+              className="inline-flex items-center text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors underline decoration-brand-600/30 underline-offset-4"
+            >
+              Go to Student Login
+            </Link>
+          </div>
         </div>
       </main>
     </div>
