@@ -293,9 +293,6 @@ export default function StudentHomePage() {
                             >
                               {isActive ? 'Live Now' : isUpcoming ? 'Upcoming' : 'Ended'}
                             </span>
-                            <span className="text-xs font-mono font-bold text-brand-600">
-                              {test.maxMarks} Marks
-                            </span>
                           </div>
 
                           <h3 className="text-lg font-bold text-slate-900 leading-snug mb-2">
@@ -308,12 +305,20 @@ export default function StudentHomePage() {
 
                           <div className="space-y-2 text-xs text-slate-600 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                             <div className="flex items-center gap-2">
+                              <Award className="w-4 h-4 text-brand-500 shrink-0" />
+                              <span>Total Marks: <strong className="text-brand-600 text-sm">{test.maxMarks}</strong></span>
+                            </div>
+                            <div className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-slate-400 shrink-0" />
                               <span>Duration: <strong>{test.durationMinutes} Mins</strong></span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
                               <span>Starts: <strong>{formatDateTime(test.startDateTime)}</strong></span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                              <span>Ends: <strong>{formatDateTime(test.endDateTime)}</strong></span>
                             </div>
                           </div>
                         </div>
