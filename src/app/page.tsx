@@ -18,6 +18,7 @@ import {
   LogIn,
   AlertCircle,
   CheckCircle,
+  CheckCircle2,
   Award,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
