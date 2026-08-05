@@ -324,6 +324,8 @@ export default function ExamPage() {
   const handleOptionSelect = (optionKey: string) => {
     if (!questions[currentIndex]) return;
     const qId = questions[currentIndex].id;
+    if (userAnswers[qId]) return; // Enforce no changes once selected
+    
     setUserAnswers((prev) => ({
       ...prev,
       [qId]: optionKey,
@@ -618,27 +620,49 @@ export default function ExamPage() {
                       { key: 'C', text: currentQ.optionC },
                       { key: 'D', text: currentQ.optionD },
                     ].map((opt) => {
+                      const hasAnswered = !!userAnswers[currentQ.id];
                       const isSelected = userAnswers[currentQ.id] === opt.key;
+                      const isCorrectAnswer = currentQ.correctAnswer === opt.key;
+                      
+                      let containerStyles = 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800';
+                      let iconStyles = 'bg-slate-100 text-slate-600 border-slate-300';
+                      
+                      if (hasAnswered) {
+                        if (isSelected && isCorrectAnswer) {
+                          containerStyles = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-md ring-2 ring-emerald-500/20 cursor-default';
+                          iconStyles = 'bg-emerald-600 text-white border-emerald-600';
+                        } else if (isSelected && !isCorrectAnswer) {
+                          containerStyles = 'bg-red-50 border-red-500 text-red-950 font-bold shadow-md ring-2 ring-red-500/20 cursor-default';
+                          iconStyles = 'bg-red-600 text-white border-red-600';
+                        } else if (isCorrectAnswer) {
+                          containerStyles = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-md cursor-default';
+                          iconStyles = 'bg-emerald-600 text-white border-emerald-600';
+                        } else {
+                          containerStyles = 'bg-slate-50 border-slate-200 text-slate-400 cursor-default opacity-60';
+                          iconStyles = 'bg-slate-100 text-slate-300 border-slate-200';
+                        }
+                      }
+
                       return (
                         <button
                           key={opt.key}
                           onClick={() => handleOptionSelect(opt.key)}
-                          className={`w-full p-4 rounded-2xl border text-left flex items-start gap-3.5 transition-all duration-200 ${
-                            isSelected
-                              ? 'bg-brand-50 border-brand-500 text-brand-950 font-bold shadow-md shadow-brand-500/10 ring-2 ring-brand-500/20'
-                              : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
-                          }`}
+                          disabled={hasAnswered}
+                          className={`w-full p-4 rounded-2xl border text-left flex items-center gap-3.5 transition-all duration-200 ${containerStyles}`}
                         >
                           <span
-                            className={`w-7 h-7 rounded-xl text-xs font-black flex items-center justify-center shrink-0 border ${
-                              isSelected
-                                ? 'bg-brand-600 text-white border-brand-600'
-                                : 'bg-slate-100 text-slate-600 border-slate-300'
-                            }`}
+                            className={`w-7 h-7 rounded-xl text-xs font-black flex items-center justify-center shrink-0 border ${iconStyles}`}
                           >
                             {opt.key}
                           </span>
-                          <span className="pt-0.5 text-sm">{opt.text}</span>
+                          <span className="pt-0.5 text-sm flex-1">{opt.text}</span>
+                          
+                          {hasAnswered && isCorrectAnswer && (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                          )}
+                          {hasAnswered && isSelected && !isCorrectAnswer && (
+                            <XCircle className="w-5 h-5 text-red-600 shrink-0" />
+                          )}
                         </button>
                       );
                     })}
