@@ -559,7 +559,7 @@ export default function ExamPage() {
       <WatermarkOverlay
         studentName={profile?.name}
         studentId={(profile as StudentProfile)?.studentIdCode || '100'}
-        opacity={0.08}
+        opacity={0.3}
       />
       <div className="min-h-screen bg-slate-900 text-white flex flex-col font-sans">
         {/* Fullscreen Exam Header */}

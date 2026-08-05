@@ -13,7 +13,7 @@ export const WatermarkOverlay: React.FC<WatermarkOverlayProps> = ({
   studentName = 'Student',
   studentId = '100',
   userIp = '192.168.1.3',
-  opacity = 0.12,
+  opacity = 0.15,
 }) => {
   const [timeString, setTimeString] = useState('');
 
@@ -26,8 +26,8 @@ export const WatermarkOverlay: React.FC<WatermarkOverlayProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  const watermarkText = `${studentName} | ID: ${studentId} | IP: ${userIp} | ${timeString}`;
-  const tiles = Array.from({ length: 18 });
+  const watermarkText = `${studentName} • ID: ${studentId} • ${timeString}`;
+  const tiles = Array.from({ length: 24 });
 
   return (
     <div
@@ -38,10 +38,11 @@ export const WatermarkOverlay: React.FC<WatermarkOverlayProps> = ({
       {tiles.map((_, i) => (
         <div
           key={i}
-          className="text-slate-400 font-mono font-bold text-xs tracking-widest uppercase transform -rotate-12 whitespace-nowrap"
+          className="text-slate-500 font-mono font-black text-sm tracking-widest uppercase transform -rotate-12 whitespace-nowrap drop-shadow-md"
           style={{
             userSelect: 'none',
             WebkitUserSelect: 'none',
+            color: 'rgba(148, 163, 184, 0.6)' // slate-400 with 60% opacity
           }}
         >
           {watermarkText}
