@@ -28,29 +28,29 @@ export default function AdminResultsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedAttempt, setSelectedAttempt] = useState<Attempt | null>(null);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch Tests for Filter Dropdown
+      const testsSnap = await getDocs(collection(db, 'tests'));
+      const tList: Test[] = [];
+      testsSnap.forEach((d) => tList.push({ ...d.data(), id: d.id } as Test));
+      setTests(tList);
+
+      // Fetch All Attempts (Sorted in-memory to prevent Firestore missing index errors)
+      const attemptsSnap = await getDocs(collection(db, 'attempts'));
+      const aList: Attempt[] = [];
+      attemptsSnap.forEach((d) => aList.push({ ...d.data(), id: d.id } as Attempt));
+      aList.sort((a, b) => new Date(b.startTime || 0).getTime() - new Date(a.startTime || 0).getTime());
+      setAttempts(aList);
+    } catch (err) {
+      console.error('Error fetching results:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Fetch Tests for Filter Dropdown
-        const testsSnap = await getDocs(collection(db, 'tests'));
-        const tList: Test[] = [];
-        testsSnap.forEach((d) => tList.push({ ...d.data(), id: d.id } as Test));
-        setTests(tList);
-
-        // Fetch All Attempts (Sorted in-memory to prevent Firestore missing index errors)
-        const attemptsSnap = await getDocs(collection(db, 'attempts'));
-        const aList: Attempt[] = [];
-        attemptsSnap.forEach((d) => aList.push({ ...d.data(), id: d.id } as Attempt));
-        aList.sort((a, b) => new Date(b.startTime || 0).getTime() - new Date(a.startTime || 0).getTime());
-        setAttempts(aList);
-      } catch (err) {
-        console.error('Error fetching results:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -124,13 +124,23 @@ export default function AdminResultsPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleExportCSV}
-          disabled={!filteredAttempts.length}
-          className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-emerald-500/20 disabled:opacity-50 transition-all flex items-center gap-2 self-start sm:self-auto"
-        >
-          <Download className="w-4 h-4" /> Export CSV Report
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={fetchData}
+            disabled={loading}
+            className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl shadow-sm border border-slate-200 disabled:opacity-50 transition-all flex items-center gap-2"
+          >
+            <RotateCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+          <button
+            onClick={handleExportCSV}
+            disabled={!filteredAttempts.length}
+            className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-emerald-500/20 disabled:opacity-50 transition-all flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" /> Export CSV Report
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
