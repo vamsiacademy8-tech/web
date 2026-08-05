@@ -12,6 +12,7 @@ import {
 import { db } from '@/lib/firebase';
 import { StudentProfile, StudentStatus } from '@/types';
 import { StudentModal } from '@/components/admin/StudentModal';
+import { StudentPDFExportModal } from '@/components/admin/StudentPDFExportModal';
 import {
   Users,
   UserPlus,
@@ -23,6 +24,7 @@ import {
   Phone,
   Mail,
   ShieldAlert,
+  Download,
 } from 'lucide-react';
 
 export default function AdminStudentsPage() {
@@ -30,6 +32,7 @@ export default function AdminStudentsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
 
   const fetchStudents = async () => {
@@ -186,6 +189,13 @@ export default function AdminStudentsPage() {
           </button>
 
           <button
+            onClick={() => setIsPDFModalOpen(true)}
+            className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl shadow-sm border border-slate-200 transition-all flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" /> Download PDF
+          </button>
+
+          <button
             onClick={() => {
               setSelectedStudent(null);
               setIsModalOpen(true);
@@ -301,6 +311,12 @@ export default function AdminStudentsPage() {
         onSave={handleSaveStudent}
         initialData={selectedStudent}
         defaultStudentIdCode={getNextStudentIdCode()}
+      />
+
+      <StudentPDFExportModal
+        isOpen={isPDFModalOpen}
+        onClose={() => setIsPDFModalOpen(false)}
+        students={filteredStudents}
       />
     </div>
   );
