@@ -38,7 +38,7 @@ export const StudentPDFExportModal: React.FC<StudentPDFExportModalProps> = ({
       if (fields.id) row.push(s.studentIdCode || s.id);
       if (fields.name) row.push(s.name);
       if (fields.phone) row.push(s.phone);
-      if (fields.status) row.push(s.isActive ? 'Active' : 'Inactive');
+      if (fields.status) row.push(s.status === 'active' ? 'Active' : 'Inactive');
       return row;
     });
 
