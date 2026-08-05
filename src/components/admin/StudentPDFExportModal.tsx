@@ -34,10 +34,10 @@ export const StudentPDFExportModal: React.FC<StudentPDFExportModalProps> = ({
     if (fields.status) tableCols.push('Status');
 
     const tableRows = students.map((s) => {
-      const row = [];
-      if (fields.id) row.push(s.studentIdCode || s.id);
-      if (fields.name) row.push(s.name);
-      if (fields.phone) row.push(s.phone);
+      const row: string[] = [];
+      if (fields.id) row.push(s.studentIdCode || s.id || '');
+      if (fields.name) row.push(s.name || '');
+      if (fields.phone) row.push(s.phone || 'N/A');
       if (fields.status) row.push(s.status === 'active' ? 'Active' : 'Inactive');
       return row;
     });
