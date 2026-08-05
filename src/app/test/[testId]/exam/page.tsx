@@ -73,6 +73,7 @@ export default function ExamPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [finalResult, setFinalResult] = useState<AttemptResult | null>(null);
+  const [showErrorFeedback, setShowErrorFeedback] = useState(false);
 
   // Spark Plan Optimization: Single Query Load Questions
   useEffect(() => {
@@ -324,7 +325,7 @@ export default function ExamPage() {
   const handleOptionSelect = (optionKey: string) => {
     if (!questions[currentIndex]) return;
     const qId = questions[currentIndex].id;
-    if (userAnswers[qId]) return; // Enforce no changes once selected
+    if (showErrorFeedback) return; // Enforce no changes while viewing error feedback
     
     setUserAnswers((prev) => ({
       ...prev,
@@ -335,8 +336,16 @@ export default function ExamPage() {
   const handleNextQuestion = async () => {
     if (!questions[currentIndex]) return;
     const qId = questions[currentIndex].id;
-    if (!userAnswers[qId]) return; // Enforce answering
+    const selectedAns = userAnswers[qId];
+    if (!selectedAns) return; // Enforce answering
 
+    // Check if wrong and feedback hasn't been shown yet
+    if (selectedAns !== questions[currentIndex].correctAnswer && !showErrorFeedback) {
+      setShowErrorFeedback(true);
+      return; // Stop here to show feedback
+    }
+
+    // Proceeding to next question
     const answeredCount = Object.keys(userAnswers).length;
     
     // Auto-save to Firebase every 3 questions
@@ -353,6 +362,7 @@ export default function ExamPage() {
       }
     }
 
+    setShowErrorFeedback(false);
     setCurrentIndex((prev) => Math.min(questions.length - 1, prev + 1));
   };
 
@@ -627,11 +637,8 @@ export default function ExamPage() {
                       let containerStyles = 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800';
                       let iconStyles = 'bg-slate-100 text-slate-600 border-slate-300';
                       
-                      if (hasAnswered) {
-                        if (isSelected && isCorrectAnswer) {
-                          containerStyles = 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold shadow-md ring-2 ring-emerald-500/20 cursor-default';
-                          iconStyles = 'bg-emerald-600 text-white border-emerald-600';
-                        } else if (isSelected && !isCorrectAnswer) {
+                      if (showErrorFeedback) {
+                        if (isSelected && !isCorrectAnswer) {
                           containerStyles = 'bg-red-50 border-red-500 text-red-950 font-bold shadow-md ring-2 ring-red-500/20 cursor-default';
                           iconStyles = 'bg-red-600 text-white border-red-600';
                         } else if (isCorrectAnswer) {
@@ -641,13 +648,17 @@ export default function ExamPage() {
                           containerStyles = 'bg-slate-50 border-slate-200 text-slate-400 cursor-default opacity-60';
                           iconStyles = 'bg-slate-100 text-slate-300 border-slate-200';
                         }
+                      } else if (isSelected) {
+                         // Normal selection before clicking next
+                         containerStyles = 'bg-brand-50 border-brand-500 text-brand-950 font-bold shadow-md shadow-brand-500/10 ring-2 ring-brand-500/20';
+                         iconStyles = 'bg-brand-600 text-white border-brand-600';
                       }
 
                       return (
                         <button
                           key={opt.key}
                           onClick={() => handleOptionSelect(opt.key)}
-                          disabled={hasAnswered}
+                          disabled={showErrorFeedback}
                           className={`w-full p-4 rounded-2xl border text-left flex items-center gap-3.5 transition-all duration-200 ${containerStyles}`}
                         >
                           <span
@@ -657,10 +668,10 @@ export default function ExamPage() {
                           </span>
                           <span className="pt-0.5 text-sm flex-1">{opt.text}</span>
                           
-                          {hasAnswered && isCorrectAnswer && (
+                          {showErrorFeedback && isCorrectAnswer && (
                             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                           )}
-                          {hasAnswered && isSelected && !isCorrectAnswer && (
+                          {showErrorFeedback && isSelected && !isCorrectAnswer && (
                             <XCircle className="w-5 h-5 text-red-600 shrink-0" />
                           )}
                         </button>
