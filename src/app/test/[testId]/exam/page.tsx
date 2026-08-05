@@ -74,6 +74,7 @@ export default function ExamPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [finalResult, setFinalResult] = useState<AttemptResult | null>(null);
   const [showErrorFeedback, setShowErrorFeedback] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Spark Plan Optimization: Single Query Load Questions
   useEffect(() => {
@@ -334,6 +335,7 @@ export default function ExamPage() {
   };
 
   const handleNextQuestion = async () => {
+    if (isSaving) return;
     if (!questions[currentIndex]) return;
     const qId = questions[currentIndex].id;
     const selectedAns = userAnswers[qId];
@@ -350,6 +352,7 @@ export default function ExamPage() {
     
     // Auto-save to Firebase every 3 questions
     if (answeredCount > 0 && answeredCount % 3 === 0 && attemptId) {
+      setIsSaving(true);
       try {
         await updateDoc(doc(db, 'attempts', attemptId), {
           userAnswers,
@@ -359,6 +362,8 @@ export default function ExamPage() {
         });
       } catch (err) {
         console.error('Failed batch Firestore sync:', err);
+      } finally {
+        setIsSaving(false);
       }
     }
 
@@ -703,10 +708,10 @@ export default function ExamPage() {
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  disabled={!userAnswers[currentQ?.id]}
+                  disabled={!userAnswers[currentQ?.id] || isSaving}
                   className="py-2.5 px-5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-brand-500/20 flex items-center gap-1.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next Question <ChevronRight className="w-4 h-4" />
+                  {isSaving ? 'Saving...' : 'Next Question'} <ChevronRight className="w-4 h-4" />
                 </button>
               )}
             </div>
