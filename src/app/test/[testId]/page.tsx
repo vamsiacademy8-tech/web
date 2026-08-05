@@ -36,6 +36,7 @@ export default function TestLandingPage() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
     const fetchTestDetails = async () => {
@@ -69,6 +70,10 @@ export default function TestLandingPage() {
     } finally {
       setIsAuthenticating(false);
     }
+  };
+
+  const confirmStartExam = () => {
+    setShowWarning(true);
   };
 
   const startExam = () => {
@@ -265,11 +270,10 @@ export default function TestLandingPage() {
                 </div>
               </div>
 
-              {/* Action Button */}
               {isAvailable && (
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
                   <button
-                    onClick={startExam}
+                    onClick={confirmStartExam}
                     className="py-4 px-8 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-base rounded-2xl shadow-xl shadow-brand-500/25 transition-all flex items-center gap-3 scale-100 hover:scale-105"
                   >
                     <PlayCircle className="w-6 h-6" />
@@ -281,6 +285,39 @@ export default function TestLandingPage() {
           </div>
         )}
       </main>
+
+      {/* Strict Anti-Cheating Warning Popup */}
+      {showWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-red-200">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4 border-4 border-red-50">
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 text-center mb-2">
+              STRICT WARNING
+            </h3>
+            <p className="text-sm text-slate-600 text-center font-medium leading-relaxed mb-6">
+              Your screen, background activity, and IP address will be continuously monitored. <strong className="text-red-600">Taking screenshots or attempting to share questions will result in instant termination of your exam and strict disciplinary action.</strong>
+              <br /><br />
+              Do you accept these terms?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowWarning(false)}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={startExam}
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md shadow-red-500/20 transition-all flex items-center justify-center gap-2"
+              >
+                <ShieldCheck className="w-4 h-4" /> I Accept, Start
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
