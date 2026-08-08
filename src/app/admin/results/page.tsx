@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore/lite';
+import { collection, getDocs, doc, deleteDoc, writeBatch } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Attempt, Test } from '@/types';
 import { formatDateTime } from '@/lib/utils';
@@ -19,6 +19,7 @@ import {
   Eye,
   X,
   RotateCcw,
+  Trash2,
 } from 'lucide-react';
 
 export default function AdminResultsPage() {
@@ -133,6 +134,30 @@ export default function AdminResultsPage() {
     }
   };
 
+  const handleClearAll = async () => {
+    if (!filteredAttempts.length) return;
+    if (!confirm('Are you absolutely sure you want to delete ALL result records currently shown? This action cannot be undone.')) return;
+
+    try {
+      setLoading(true);
+      const batch = writeBatch(db);
+      filteredAttempts.forEach((a) => {
+        batch.delete(doc(db, 'attempts', a.id));
+      });
+      await batch.commit();
+      
+      const remaining = attempts.filter(a => !filteredAttempts.find(f => f.id === a.id));
+      setAttempts(remaining);
+      setSelectedAttempt(null);
+      alert('Result records cleared successfully.');
+    } catch (err) {
+      console.error('Failed to clear records:', err);
+      alert('Failed to clear records.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -156,6 +181,15 @@ export default function AdminResultsPage() {
             <RotateCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </button>
+          {filteredAttempts.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              disabled={loading}
+              className="py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 font-extrabold text-xs rounded-xl shadow-sm border border-red-200 disabled:opacity-50 transition-all flex items-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" /> Clear All
+            </button>
+          )}
           <button
             onClick={handleExportPDF}
             disabled={!filteredAttempts.length}
