@@ -161,7 +161,7 @@ export const TestModal: React.FC<TestModalProps> = ({
         instructions,
         shareCode: shareCode || generateShareCode(),
         isPublished: initialData?.isPublished ?? false,
-        assignedStudentIds: assignmentType === 'students' ? assignedStudentIds : 'all',
+        assignedStudentIds: assignmentType === 'all' ? 'all' : (assignmentType === 'students' ? assignedStudentIds : []),
         assignedBatchIds: assignmentType === 'batches' ? assignedBatchIds : [],
       });
       onClose();
