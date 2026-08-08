@@ -120,10 +120,14 @@ export default function TestLandingPage() {
 
   // Student Assignment Check
   const studentProfile = profile as StudentProfile;
+  const assignedBatches = test.assignedBatchIds || [];
+  const studentBatches = studentProfile?.batchIds || [];
+  const inAssignedBatch = assignedBatches.some(b => studentBatches.includes(b));
+
   const isAssigned =
     test.assignedStudentIds === 'all' ||
-    (Array.isArray(test.assignedStudentIds) &&
-      test.assignedStudentIds.includes(user?.uid || ''));
+    (Array.isArray(test.assignedStudentIds) && test.assignedStudentIds.includes(user?.uid || '')) ||
+    inAssignedBatch;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">

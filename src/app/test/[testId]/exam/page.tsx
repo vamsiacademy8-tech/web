@@ -90,6 +90,23 @@ export default function ExamPage() {
           return;
         }
         const loadedTest = { id: testSnap.id, ...testSnap.data() } as Test;
+
+        // Security Check: Verify Assignment
+        const studentProfile = profile as StudentProfile;
+        const assignedBatches = loadedTest.assignedBatchIds || [];
+        const studentBatches = studentProfile?.batchIds || [];
+        const inAssignedBatch = assignedBatches.some(b => studentBatches.includes(b));
+
+        const isAssigned =
+          loadedTest.assignedStudentIds === 'all' ||
+          (Array.isArray(loadedTest.assignedStudentIds) && loadedTest.assignedStudentIds.includes(user.uid)) ||
+          inAssignedBatch;
+
+        if (!isAssigned) {
+          router.push(`/test/${testId}`);
+          return;
+        }
+
         setTest(loadedTest);
 
         // 2. Single Query Fetch All Questions
