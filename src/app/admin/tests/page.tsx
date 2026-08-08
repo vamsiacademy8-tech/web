@@ -82,6 +82,7 @@ export default function AdminTestsPage() {
         negativeMarking: testData.negativeMarking ?? 0.25,
         instructions: testData.instructions || '',
         assignedStudentIds: testData.assignedStudentIds || 'all',
+        assignedBatchIds: testData.assignedBatchIds || [],
         isPublished: testData.isPublished ?? false,
         shareCode: testData.shareCode || generateShareCode(),
         createdAt: testData.createdAt || new Date().toISOString(),
