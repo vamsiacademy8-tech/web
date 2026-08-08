@@ -26,7 +26,6 @@ import {
   Download,
   Trash2,
   Edit,
-  Copy,
   ArrowLeft,
   Save,
   X,
@@ -162,27 +161,6 @@ export default function QuestionManagementPage() {
       await fetchTestAndQuestions();
     } catch (err) {
       console.error('Failed to save question:', err);
-    }
-  };
-
-  const handleDuplicate = async (q: Question) => {
-    try {
-      const newId = `q_${Date.now()}`;
-      const payload: Question = {
-        ...q,
-        id: newId,
-        question: `${q.question} (Copy)`,
-        orderIndex: questions.length,
-      };
-
-      await setDoc(doc(db, 'tests', testId, 'questions', newId), payload);
-      await updateDoc(doc(db, 'tests', testId), { 
-        questionCount: increment(1),
-        maxMarks: increment(q.marks || test?.marksPerQuestion || 1)
-      });
-      await fetchTestAndQuestions();
-    } catch (err) {
-      console.error('Failed to duplicate question:', err);
     }
   };
 
@@ -371,13 +349,6 @@ export default function QuestionManagementPage() {
                     title="Edit Question"
                   >
                     <Edit className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDuplicate(q)}
-                    className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-colors"
-                    title="Duplicate Question"
-                  >
-                    <Copy className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(q.id)}
