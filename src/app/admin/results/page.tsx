@@ -5,7 +5,8 @@ import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { Attempt, Test } from '@/types';
 import { formatDateTime } from '@/lib/utils';
-import { exportToCSV } from '@/lib/csvHelper';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   Award,
   Download,
@@ -68,24 +69,46 @@ export default function AdminResultsPage() {
     .filter((a) => a.result)
     .sort((a, b) => (b.result?.percentage ?? 0) - (a.result?.percentage ?? 0));
 
-  const handleExportCSV = () => {
-    const exportRows = filteredAttempts.map((a) => ({
-      'Student Name': a.studentName,
-      'Student ID': a.studentIdCode || a.studentEmail,
-      'Test Name': a.testName || a.testId,
-      Status: a.status,
-      Score: a.result?.score ?? 0,
-      Percentage: `${a.result?.percentage ?? 0}%`,
-      Correct: a.result?.correct ?? 0,
-      Wrong: a.result?.wrong ?? 0,
-      Skipped: a.result?.skipped ?? 0,
-      Passed: a.result?.passed ? 'YES' : 'NO',
-      'Violations Count': a.violationsCount || 0,
-      'Start Time': a.startTime,
-      'Submitted At': a.submittedAt || '',
-    }));
+  const handleExportPDF = () => {
+    if (!filteredAttempts.length) return;
+    
+    const doc = new jsPDF('landscape');
+    doc.text('Results, Leaderboards & Analytics Report', 14, 20);
+    
+    const tableCols = [
+      'Student Name',
+      'Student ID',
+      'Test ID',
+      'Status',
+      'Score',
+      'Percentage',
+      'Passed',
+      'Violations'
+    ];
+    
+    const tableRows = filteredAttempts.map((a) => {
+      const row: string[] = [];
+      row.push(a.studentName || 'N/A');
+      row.push(a.studentIdCode || a.studentEmail || 'N/A');
+      row.push(a.testName || a.testId || 'N/A');
+      row.push(a.status || 'N/A');
+      row.push(String(a.result?.score ?? 0));
+      row.push(`${a.result?.percentage ?? 0}%`);
+      row.push(a.result?.passed ? 'YES' : 'NO');
+      row.push(String(a.violationsCount || 0));
+      return row;
+    });
 
-    exportToCSV(`vamsi_academy_exam_results_${Date.now()}`, exportRows);
+    autoTable(doc, {
+      startY: 30,
+      head: [tableCols],
+      body: tableRows,
+      theme: 'grid',
+      headStyles: { fillColor: [5, 150, 105] },
+      styles: { fontSize: 9 },
+    });
+
+    doc.save(`vamsi_academy_results_${Date.now()}.pdf`);
   };
 
   const handleResetAttempt = async (attempt: Attempt) => {
@@ -120,7 +143,7 @@ export default function AdminResultsPage() {
             Results, Leaderboards & Analytics
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Review detailed student marks, anti-cheating violation logs, and export reports to CSV.
+            Review detailed student marks, anti-cheating violation logs, and export reports to PDF.
           </p>
         </div>
 
@@ -134,11 +157,11 @@ export default function AdminResultsPage() {
             Refresh
           </button>
           <button
-            onClick={handleExportCSV}
+            onClick={handleExportPDF}
             disabled={!filteredAttempts.length}
             className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-emerald-500/20 disabled:opacity-50 transition-all flex items-center gap-2"
           >
-            <Download className="w-4 h-4" /> Export CSV Report
+            <Download className="w-4 h-4" /> Export PDF Report
           </button>
         </div>
       </div>
