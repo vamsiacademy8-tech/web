@@ -99,7 +99,7 @@ export default function ExamPage() {
 
         const isAssigned =
           loadedTest.assignedStudentIds === 'all' ||
-          (Array.isArray(loadedTest.assignedStudentIds) && loadedTest.assignedStudentIds.includes(user.uid)) ||
+          (Array.isArray(loadedTest.assignedStudentIds) && loadedTest.assignedStudentIds.includes(studentProfile?.id || '')) ||
           inAssignedBatch;
 
         if (!isAssigned) {

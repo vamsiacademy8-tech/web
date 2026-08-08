@@ -118,7 +118,6 @@ export default function TestLandingPage() {
   const isAfterEnd = now > endDate;
   const isAvailable = !isBeforeStart && !isAfterEnd && test.isPublished;
 
-  // Student Assignment Check
   const studentProfile = profile as StudentProfile;
   const assignedBatches = test.assignedBatchIds || [];
   const studentBatches = studentProfile?.batchIds || [];
@@ -126,7 +125,7 @@ export default function TestLandingPage() {
 
   const isAssigned =
     test.assignedStudentIds === 'all' ||
-    (Array.isArray(test.assignedStudentIds) && test.assignedStudentIds.includes(user?.uid || '')) ||
+    (Array.isArray(test.assignedStudentIds) && test.assignedStudentIds.includes(studentProfile?.id || '')) ||
     inAssignedBatch;
 
   return (

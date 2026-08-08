@@ -74,10 +74,12 @@ export default function StudentHomePage() {
 
           const inAssignedBatch = assignedBatches.some(b => studentBatches.includes(b));
 
+          const studentDocId = (profile as StudentProfile)?.id;
+
           // Filter if assigned to 'all' or specifically contains student ID or is in assigned batch
           if (
             assigned === 'all' ||
-            (Array.isArray(assigned) && assigned.includes(currentUid)) ||
+            (Array.isArray(assigned) && assigned.includes(studentDocId)) ||
             inAssignedBatch
           ) {
             loaded.push(t);
