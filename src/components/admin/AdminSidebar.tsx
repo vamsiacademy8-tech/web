@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, FileCheck2, Award, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck2, Award, ChevronRight, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const AdminSidebar: React.FC = () => {
@@ -12,6 +12,7 @@ export const AdminSidebar: React.FC = () => {
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Students', href: '/admin/students', icon: Users },
+    { name: 'Batches', href: '/admin/batches', icon: BookOpen },
     { name: 'Tests & Questions', href: '/admin/tests', icon: FileCheck2 },
     { name: 'Results & Analytics', href: '/admin/results', icon: Award },
   ];

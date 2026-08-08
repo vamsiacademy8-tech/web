@@ -3,7 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Test } from '@/types';
 import { generateShareCode } from '@/lib/utils';
-import { X, FilePlus2, Save, Link as LinkIcon } from 'lucide-react';
+import { X, FilePlus2, Save, Link as LinkIcon, Users, BookOpen, Check } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore/lite';
+import { db } from '@/lib/firebase';
+import { cn } from '@/lib/utils';
+import { Batch, StudentProfile } from '@/types';
 
 interface TestModalProps {
   isOpen: boolean;
@@ -35,6 +39,43 @@ export const TestModal: React.FC<TestModalProps> = ({
   const [shareCode, setShareCode] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [assignmentType, setAssignmentType] = useState<'all' | 'batches' | 'students'>('all');
+  const [assignedBatchIds, setAssignedBatchIds] = useState<string[]>([]);
+  const [assignedStudentIds, setAssignedStudentIds] = useState<string[]>([]);
+
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [students, setStudents] = useState<StudentProfile[]>([]);
+  const [dataLoading, setDataLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const fetchSelectableData = async () => {
+      setDataLoading(true);
+      try {
+        const [bSnap, sSnap] = await Promise.all([
+          getDocs(collection(db, 'batches')),
+          getDocs(collection(db, 'students'))
+        ]);
+        const bList: Batch[] = [];
+        bSnap.forEach(d => bList.push({ ...d.data(), id: d.id } as Batch));
+        
+        const sList: StudentProfile[] = [];
+        sSnap.forEach(d => {
+          const st = { ...d.data(), id: d.id } as StudentProfile;
+          if (st.status === 'active') sList.push(st);
+        });
+
+        setBatches(bList);
+        setStudents(sList);
+      } catch (err) {
+        console.error('Error fetching batches/students:', err);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    fetchSelectableData();
+  }, [isOpen]);
+
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || '');
@@ -58,6 +99,22 @@ export const TestModal: React.FC<TestModalProps> = ({
       setShowResultImmediately(initialData.showResultImmediately ?? true);
       setInstructions(initialData.instructions || '');
       setShareCode(initialData.shareCode || generateShareCode());
+      
+      const sIds = initialData.assignedStudentIds;
+      const bIds = initialData.assignedBatchIds || [];
+      if (bIds.length > 0) {
+        setAssignmentType('batches');
+        setAssignedBatchIds(bIds);
+        setAssignedStudentIds([]);
+      } else if (Array.isArray(sIds) && sIds.length > 0) {
+        setAssignmentType('students');
+        setAssignedStudentIds(sIds);
+        setAssignedBatchIds([]);
+      } else {
+        setAssignmentType('all');
+        setAssignedBatchIds([]);
+        setAssignedStudentIds([]);
+      }
     } else {
       const now = new Date();
       const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -73,6 +130,9 @@ export const TestModal: React.FC<TestModalProps> = ({
       setAllowBackNav(true);
       setShowResultImmediately(true);
       setShareCode(generateShareCode());
+      setAssignmentType('all');
+      setAssignedBatchIds([]);
+      setAssignedStudentIds([]);
     }
   }, [initialData, isOpen]);
 
@@ -100,7 +160,8 @@ export const TestModal: React.FC<TestModalProps> = ({
         instructions,
         shareCode: shareCode || generateShareCode(),
         isPublished: initialData?.isPublished ?? false,
-        assignedStudentIds: initialData?.assignedStudentIds || 'all',
+        assignedStudentIds: assignmentType === 'students' ? assignedStudentIds : 'all',
+        assignedBatchIds: assignmentType === 'batches' ? assignedBatchIds : [],
       });
       onClose();
     } catch (err) {
@@ -239,6 +300,81 @@ export const TestModal: React.FC<TestModalProps> = ({
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm transition-all font-sans"
             />
           </div>
+
+          <div className="pt-2 border-t border-slate-100">
+            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+              Assign Test To:
+            </label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setAssignmentType('all')}
+                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all", assignmentType === 'all' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+              >
+                All Students
+              </button>
+              <button
+                type="button"
+                onClick={() => setAssignmentType('batches')}
+                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'batches' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+              >
+                <BookOpen className="w-3.5 h-3.5" /> Specific Batches
+              </button>
+              <button
+                type="button"
+                onClick={() => setAssignmentType('students')}
+                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'students' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+              >
+                <Users className="w-3.5 h-3.5" /> Selective Students
+              </button>
+            </div>
+          </div>
+
+          {assignmentType === 'batches' && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+              {dataLoading ? (
+                <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
+              ) : batches.length === 0 ? (
+                <div className="text-xs text-center text-slate-400 py-2">No batches created yet.</div>
+              ) : (
+                batches.map((b) => {
+                  const isSel = assignedBatchIds.includes(b.id);
+                  return (
+                    <div key={b.id} onClick={() => setAssignedBatchIds(prev => isSel ? prev.filter(x => x !== b.id) : [...prev, b.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                      <div>
+                        <div className="font-bold text-xs text-slate-800">{b.name}</div>
+                        <div className="text-[10px] text-slate-500">{b.studentIds?.length || 0} students</div>
+                      </div>
+                      {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {assignmentType === 'students' && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+              {dataLoading ? (
+                <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
+              ) : students.length === 0 ? (
+                <div className="text-xs text-center text-slate-400 py-2">No active students found.</div>
+              ) : (
+                students.map((s) => {
+                  const isSel = assignedStudentIds.includes(s.id);
+                  return (
+                    <div key={s.id} onClick={() => setAssignedStudentIds(prev => isSel ? prev.filter(x => x !== s.id) : [...prev, s.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                      <div>
+                        <div className="font-bold text-xs text-slate-800">{s.name}</div>
+                        <div className="text-[10px] text-slate-500">{s.studentIdCode || s.email}</div>
+                      </div>
+                      {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
 
           <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
             <button

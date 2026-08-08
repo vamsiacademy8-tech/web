@@ -69,10 +69,16 @@ export default function StudentHomePage() {
         testsSnap.forEach((doc) => {
           const t = { id: doc.id, ...doc.data() } as Test;
           const assigned = t.assignedStudentIds || 'all';
-          // Filter if assigned to 'all' or specifically contains student ID
+          const assignedBatches = t.assignedBatchIds || [];
+          const studentBatches = (profile as StudentProfile)?.batchIds || [];
+
+          const inAssignedBatch = assignedBatches.some(b => studentBatches.includes(b));
+
+          // Filter if assigned to 'all' or specifically contains student ID or is in assigned batch
           if (
             assigned === 'all' ||
-            (Array.isArray(assigned) && assigned.includes(currentUid))
+            (Array.isArray(assigned) && assigned.includes(currentUid)) ||
+            inAssignedBatch
           ) {
             loaded.push(t);
           }

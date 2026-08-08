@@ -10,6 +10,15 @@ export interface StudentProfile {
   status: StudentStatus;
   createdAt: string;
   assignedTestIds?: string[];
+  batchIds?: string[];
+}
+
+export interface Batch {
+  id: string;
+  name: string;
+  description?: string;
+  studentIds: string[];
+  createdAt: string;
 }
 
 export interface AdminProfile {
@@ -51,6 +60,7 @@ export interface Test {
   negativeMarking: number; // e.g. 0 or 0.25 or 0.5 or 1
   instructions: string;
   assignedStudentIds: string[] | 'all';
+  assignedBatchIds?: string[];
   isPublished: boolean;
   shareCode: string; // Unique URL share code
   createdAt: string;
