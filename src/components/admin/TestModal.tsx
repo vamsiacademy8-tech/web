@@ -62,7 +62,7 @@ export const TestModal: React.FC<TestModalProps> = ({
         const sList: StudentProfile[] = [];
         sSnap.forEach(d => {
           const st = { ...d.data(), id: d.id } as StudentProfile;
-          if (st.status === 'active') sList.push(st);
+          if (st.status !== 'disabled') sList.push(st);
         });
 
         setBatches(bList);
