@@ -42,6 +42,7 @@ export const TestModal: React.FC<TestModalProps> = ({
   const [assignmentType, setAssignmentType] = useState<'all' | 'batches' | 'students'>('all');
   const [assignedBatchIds, setAssignedBatchIds] = useState<string[]>([]);
   const [assignedStudentIds, setAssignedStudentIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [batches, setBatches] = useState<Batch[]>([]);
   const [students, setStudents] = useState<StudentProfile[]>([]);
@@ -331,48 +332,76 @@ export const TestModal: React.FC<TestModalProps> = ({
           </div>
 
           {assignmentType === 'batches' && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
-              {dataLoading ? (
-                <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
-              ) : batches.length === 0 ? (
-                <div className="text-xs text-center text-slate-400 py-2">No batches created yet.</div>
-              ) : (
-                batches.map((b) => {
-                  const isSel = assignedBatchIds.includes(b.id);
-                  return (
-                    <div key={b.id} onClick={() => setAssignedBatchIds(prev => isSel ? prev.filter(x => x !== b.id) : [...prev, b.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
-                      <div>
-                        <div className="font-bold text-xs text-slate-800">{b.name}</div>
-                        <div className="text-[10px] text-slate-500">{b.studentIds?.length || 0} students</div>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Search batches..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand-500 outline-none text-sm transition-all bg-slate-50"
+              />
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+                {dataLoading ? (
+                  <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
+                ) : batches.length === 0 ? (
+                  <div className="text-xs text-center text-slate-400 py-2">No batches created yet.</div>
+                ) : (
+                  batches
+                    .filter(b => (b.name || '').toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((b) => {
+                    const isSel = assignedBatchIds.includes(b.id);
+                    return (
+                      <div key={b.id} onClick={() => setAssignedBatchIds(prev => isSel ? prev.filter(x => x !== b.id) : [...prev, b.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                        <div>
+                          <div className="font-bold text-xs text-slate-800">{b.name}</div>
+                          <div className="text-[10px] text-slate-500">{b.studentIds?.length || 0} students</div>
+                        </div>
+                        {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
                       </div>
-                      {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
-                    </div>
-                  );
-                })
-              )}
+                    );
+                  })
+                )}
+                {batches.length > 0 && batches.filter(b => (b.name || '').toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                  <div className="text-xs text-center text-slate-400 py-2">No matches found.</div>
+                )}
+              </div>
             </div>
           )}
 
           {assignmentType === 'students' && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
-              {dataLoading ? (
-                <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
-              ) : students.length === 0 ? (
-                <div className="text-xs text-center text-slate-400 py-2">No active students found.</div>
-              ) : (
-                students.map((s) => {
-                  const isSel = assignedStudentIds.includes(s.id);
-                  return (
-                    <div key={s.id} onClick={() => setAssignedStudentIds(prev => isSel ? prev.filter(x => x !== s.id) : [...prev, s.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
-                      <div>
-                        <div className="font-bold text-xs text-slate-800">{s.name}</div>
-                        <div className="text-[10px] text-slate-500">{s.studentIdCode || s.email}</div>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Search students..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand-500 outline-none text-sm transition-all bg-slate-50"
+              />
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+                {dataLoading ? (
+                  <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
+                ) : students.length === 0 ? (
+                  <div className="text-xs text-center text-slate-400 py-2">No active students found.</div>
+                ) : (
+                  students
+                    .filter(s => (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (s.studentIdCode || '').toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((s) => {
+                    const isSel = assignedStudentIds.includes(s.id);
+                    return (
+                      <div key={s.id} onClick={() => setAssignedStudentIds(prev => isSel ? prev.filter(x => x !== s.id) : [...prev, s.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                        <div>
+                          <div className="font-bold text-xs text-slate-800">{s.name}</div>
+                          <div className="text-[10px] text-slate-500">{s.studentIdCode || s.email}</div>
+                        </div>
+                        {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
                       </div>
-                      {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
-                    </div>
-                  );
-                })
-              )}
+                    );
+                  })
+                )}
+                {students.length > 0 && students.filter(s => (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || (s.studentIdCode || '').toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                  <div className="text-xs text-center text-slate-400 py-2">No matches found.</div>
+                )}
+              </div>
             </div>
           )}
 
