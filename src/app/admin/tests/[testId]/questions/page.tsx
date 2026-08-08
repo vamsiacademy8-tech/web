@@ -14,14 +14,15 @@ import {
   updateDoc,
   increment,
 } from 'firebase/firestore/lite';
-import { db } from '@/lib/firebase';
 import { Question, Test, QuestionOptionKey } from '@/types';
 import { CSVQuestionImporter } from '@/components/admin/CSVQuestionImporter';
+import { exportToCSV } from '@/lib/csvHelper';
 import { TestModal } from '@/components/admin/TestModal';
 import {
   HelpCircle,
   Plus,
   FileSpreadsheet,
+  Download,
   Trash2,
   Edit,
   Copy,
@@ -243,6 +244,22 @@ export default function QuestionManagementPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    if (questions.length === 0) return;
+    const exportRows = questions.map((q) => ({
+      Question: q.question,
+      'Option A': q.optionA,
+      'Option B': q.optionB,
+      'Option C': q.optionC,
+      'Option D': q.optionD,
+      'Correct Answer': q.correctAnswer,
+      Marks: q.marks || test?.marksPerQuestion || 1,
+      Explanation: q.explanation || '',
+      'Image URL': q.imageUrl || '',
+    }));
+    exportToCSV(`questions_${test?.name || testId}`, exportRows);
+  };
+
   return (
     <div className="space-y-6">
       {/* Back & Breadcrumb Header */}
@@ -286,6 +303,15 @@ export default function QuestionManagementPage() {
               className="py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl border border-red-200 transition-all flex items-center gap-1.5"
             >
               <Trash2 className="w-3.5 h-3.5" /> Bulk Delete
+            </button>
+          )}
+
+          {questions.length > 0 && (
+            <button
+              onClick={handleExportCSV}
+              className="py-2.5 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-all flex items-center gap-1.5"
+            >
+              <Download className="w-3.5 h-3.5" /> Export CSV
             </button>
           )}
 
