@@ -8,6 +8,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  query,
+  where,
 } from 'firebase/firestore/lite';
 import { db } from '@/lib/firebase';
 import { StudentProfile, StudentStatus } from '@/types';
@@ -65,6 +67,18 @@ export default function AdminStudentsPage() {
     status: StudentStatus;
   }) => {
     try {
+      // Check for duplicate student ID
+      const q = query(
+        collection(db, 'students'),
+        where('studentIdCode', '==', data.studentIdCode)
+      );
+      const qSnap = await getDocs(q);
+      const duplicate = qSnap.docs.find(d => d.id !== data.id);
+      
+      if (duplicate) {
+        throw new Error(`A student with ID "${data.studentIdCode}" already exists.`);
+      }
+
       const studentId = data.id || `stu_${Date.now()}`;
       const docRef = doc(db, 'students', studentId);
 
@@ -81,7 +95,6 @@ export default function AdminStudentsPage() {
       await setDoc(docRef, payload, { merge: true });
       await fetchStudents();
     } catch (err) {
-      console.error('Failed to save student:', err);
       throw err;
     }
   };
@@ -310,7 +323,6 @@ export default function AdminStudentsPage() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveStudent}
         initialData={selectedStudent}
-        defaultStudentIdCode={getNextStudentIdCode()}
       />
 
       <StudentPDFExportModal
