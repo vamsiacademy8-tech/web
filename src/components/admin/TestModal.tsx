@@ -9,6 +9,46 @@ import { db } from '@/lib/firebase';
 import { cn } from '@/lib/utils';
 import { Batch, StudentProfile } from '@/types';
 
+const DateTimeSelect = ({ value, onChange }: { value: string, onChange: (val: string) => void }) => {
+  const [date, time] = value.split('T');
+  const [hourStr, minStr] = (time || '00:00').split(':');
+  
+  let h = parseInt(hourStr || '0', 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  let displayHour = h % 12;
+  if (displayHour === 0) displayHour = 12;
+
+  const handleDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(`${e.target.value}T${time || '00:00'}`);
+  };
+
+  const handleTime = (newH: number, newM: string, newAmPm: string) => {
+    let milHour = newH;
+    if (newAmPm === 'PM' && newH < 12) milHour += 12;
+    if (newAmPm === 'AM' && newH === 12) milHour = 0;
+    
+    const hh = milHour.toString().padStart(2, '0');
+    onChange(`${date || new Date().toISOString().split('T')[0]}T${hh}:${newM}`);
+  };
+
+  return (
+    <div className="flex gap-1.5 items-center">
+      <input type="date" value={date || ''} onChange={handleDate} className="px-2.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm flex-1 font-medium bg-white" required />
+      <select value={displayHour} onChange={e => handleTime(parseInt(e.target.value, 10), minStr, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-medium bg-white">
+        {Array.from({length: 12}, (_, i) => i + 1).map(h => <option key={h} value={h}>{h.toString().padStart(2, '0')}</option>)}
+      </select>
+      <span className="font-bold text-slate-400">:</span>
+      <select value={minStr} onChange={e => handleTime(displayHour, e.target.value, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-medium bg-white">
+        {Array.from({length: 60}, (_, i) => i.toString().padStart(2, '0')).map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+      <select value={ampm} onChange={e => handleTime(displayHour, minStr, e.target.value)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-bold bg-slate-50 text-brand-700">
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+    </div>
+  )
+};
+
 interface TestModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -77,6 +117,14 @@ export const TestModal: React.FC<TestModalProps> = ({
     fetchSelectableData();
   }, [isOpen]);
 
+  const formatLocalDatetime = (dateVal: Date | string) => {
+    if (!dateVal) return '';
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return '';
+    const offset = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+  };
+
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || '');
@@ -84,12 +132,12 @@ export const TestModal: React.FC<TestModalProps> = ({
       setDurationMinutes(initialData.durationMinutes || 60);
       setStartDateTime(
         initialData.startDateTime
-          ? new Date(initialData.startDateTime).toISOString().slice(0, 16)
+          ? formatLocalDatetime(initialData.startDateTime)
           : ''
       );
       setEndDateTime(
         initialData.endDateTime
-          ? new Date(initialData.endDateTime).toISOString().slice(0, 16)
+          ? formatLocalDatetime(initialData.endDateTime)
           : ''
       );
       setMarksPerQuestion(initialData.marksPerQuestion || 1);
@@ -122,8 +170,8 @@ export const TestModal: React.FC<TestModalProps> = ({
       setName('');
       setDescription('');
       setDurationMinutes(60);
-      setStartDateTime(now.toISOString().slice(0, 16));
-      setEndDateTime(nextWeek.toISOString().slice(0, 16));
+      setStartDateTime(formatLocalDatetime(now));
+      setEndDateTime(formatLocalDatetime(nextWeek));
       setMarksPerQuestion(1);
       setPassingMarks(40);
       setRandomizeQuestions(false);
@@ -261,30 +309,18 @@ export const TestModal: React.FC<TestModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
                 Start Date & Time *
               </label>
-              <input
-                type="datetime-local"
-                required
-                value={startDateTime}
-                onChange={(e) => setStartDateTime(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm"
-              />
+              <DateTimeSelect value={startDateTime} onChange={setStartDateTime} />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
                 End Date & Time *
               </label>
-              <input
-                type="datetime-local"
-                required
-                value={endDateTime}
-                onChange={(e) => setEndDateTime(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm"
-              />
+              <DateTimeSelect value={endDateTime} onChange={setEndDateTime} />
             </div>
           </div>
 
