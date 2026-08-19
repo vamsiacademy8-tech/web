@@ -156,11 +156,11 @@ export default function AdminTestsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <FileCheck2 className="w-6 h-6 text-brand-600" />
+          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5 font-jakarta">
+            <FileCheck2 className="w-6 h-6 text-brand-400" />
             Examination & Test Management
           </h1>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
+          <p className="text-sm text-slate-400 font-medium mt-1.5">
             Create exams, manage questions, set timing windows, and copy unique student share links.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function AdminTestsPage() {
             setSelectedTest(null);
             setIsModalOpen(true);
           }}
-          className="py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-brand-500/20 transition-all flex items-center gap-2 self-start sm:self-auto"
+          className="py-2.5 px-4 brand-gradient brand-gradient-hover text-sm font-bold rounded-xl shadow-md shadow-brand-500/20 transition-all flex items-center gap-2 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" /> Create New Test
         </button>
@@ -180,13 +180,13 @@ export default function AdminTestsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           [1, 2, 3].map((n) => (
-            <div key={n} className="bg-white rounded-3xl p-6 h-56 border border-slate-200 animate-pulse"></div>
+            <div key={n} className="dark-panel rounded-3xl p-6 h-56 animate-pulse"></div>
           ))
         ) : tests.length === 0 ? (
-          <div className="col-span-full bg-white rounded-3xl p-12 text-center border border-slate-200">
-            <FileCheck2 className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-slate-800">No Tests Created Yet</h3>
-            <p className="text-xs text-slate-500 mt-1">
+          <div className="col-span-full dark-panel rounded-3xl p-12 text-center">
+            <FileCheck2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-white">No Tests Created Yet</h3>
+            <p className="text-sm text-slate-400 mt-1">
               Click &quot;Create New Test&quot; above to set up your first examination.
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function AdminTestsPage() {
           tests.map((test) => (
             <div
               key={test.id}
-              className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-soft hover:shadow-card transition-all flex flex-col justify-between"
+              className="dark-panel rounded-3xl p-6 hover:shadow-glow hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -202,8 +202,8 @@ export default function AdminTestsPage() {
                     onClick={() => handleTogglePublish(test)}
                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all ${
                       test.isPublished
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                        : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700'
                     }`}
                   >
                     {test.isPublished ? (
@@ -217,47 +217,47 @@ export default function AdminTestsPage() {
                     )}
                   </button>
 
-                  <span className="text-xs font-mono font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-100">
+                  <span className="text-xs font-mono font-bold text-brand-400 bg-brand-500/10 px-2.5 py-0.5 rounded-full border border-brand-500/20">
                     {test.questionCount || 0} Questions
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-900 leading-snug mb-1">
+                <h3 className="text-lg font-bold text-white leading-snug mb-1 font-jakarta">
                   {test.name}
                 </h3>
 
-                <p className="text-xs text-slate-500 line-clamp-2 mb-4 font-medium">
+                <p className="text-sm text-slate-400 line-clamp-2 mb-4 font-medium">
                   {test.description || 'Vamsi Academy Online Test'}
                 </p>
 
-                <div className="space-y-2 text-xs text-slate-600 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100 font-medium">
+                <div className="space-y-2 text-xs text-slate-400 mb-6 bg-slate-900/50 p-3 rounded-2xl border border-slate-800 font-medium">
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-1.5 text-slate-500">
                       <Clock className="w-3.5 h-3.5" /> Duration
                     </span>
-                    <span className="font-bold text-slate-800">{test.durationMinutes} Mins</span>
+                    <span className="font-bold text-white">{test.durationMinutes} Mins</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="flex items-center gap-1.5 text-slate-500">
                       <HelpCircle className="w-3.5 h-3.5" /> Questions
                     </span>
-                    <span className="font-bold text-brand-600">{test.questionCount || 0} Questions</span>
+                    <span className="font-bold text-brand-400">{test.questionCount || 0} Questions</span>
                   </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800 mt-2">
                     <span className="flex items-center gap-1.5 text-slate-500">
                       <Calendar className="w-3.5 h-3.5" /> Schedule Window
                     </span>
-                    <span className="font-mono text-[10px] text-slate-600">
+                    <span className="font-mono text-[10px] text-slate-400">
                       {formatDateTime(test.startDateTime)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-100">
+              <div className="space-y-2 pt-2 border-t border-slate-800">
                 <Link
                   href={`/admin/tests/${test.id}/questions`}
-                  className="w-full py-2.5 px-3 bg-brand-50 hover:bg-brand-100 text-brand-700 font-extrabold text-xs rounded-xl border border-brand-200 transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 px-3 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 font-bold text-sm rounded-xl border border-brand-500/20 transition-all flex items-center justify-center gap-1.5"
                 >
                   <HelpCircle className="w-4 h-4" /> Manage Questions ({test.questionCount || 0})
                 </Link>
@@ -265,12 +265,12 @@ export default function AdminTestsPage() {
                 <div className="flex items-center justify-between gap-1 pt-1">
                   <button
                     onClick={() => copyShareLink(test)}
-                    className="flex-1 py-2 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1"
+                    className="flex-1 py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-1"
                     title="Copy Share Link"
                   >
                     {copiedId === test.id ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600" /> Copied!
+                        <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
                       </>
                     ) : (
                       <>
@@ -285,7 +285,7 @@ export default function AdminTestsPage() {
                       setIsModalOpen(true);
                     }}
                     title="Edit Test Settings"
-                    className="p-2 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition-colors"
+                    className="p-2.5 text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 rounded-xl transition-colors"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
@@ -293,7 +293,7 @@ export default function AdminTestsPage() {
                   <button
                     onClick={() => handleDuplicateTest(test)}
                     title="Duplicate Test"
-                    className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-colors"
+                    className="p-2.5 text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 rounded-xl transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
@@ -301,7 +301,7 @@ export default function AdminTestsPage() {
                   <button
                     onClick={() => handleDeleteTest(test.id)}
                     title="Delete Test"
-                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                    className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

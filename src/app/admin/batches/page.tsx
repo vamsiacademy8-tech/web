@@ -153,11 +153,11 @@ export default function AdminBatchesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-brand-600" />
+          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5 font-jakarta">
+            <BookOpen className="w-6 h-6 text-brand-400" />
             Batch & Group Management
           </h1>
-          <p className="text-xs text-slate-500 font-medium mt-0.5">
+          <p className="text-sm text-slate-400 font-medium mt-1.5">
             Group students into batches to schedule exams specifically for them.
           </p>
         </div>
@@ -168,7 +168,7 @@ export default function AdminBatchesPage() {
               setSelectedBatch(null);
               setIsModalOpen(true);
             }}
-            className="py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs rounded-xl shadow-md shadow-brand-500/20 transition-all flex items-center gap-2"
+            className="py-2.5 px-4 brand-gradient brand-gradient-hover text-sm font-bold rounded-xl flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> Create New Batch
           </button>
@@ -177,62 +177,63 @@ export default function AdminBatchesPage() {
 
       {/* Search Bar */}
       <div className="relative max-w-md">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+        <Search className="w-5 h-5 text-slate-400 absolute left-4 top-3.5" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search batches by name..."
-          className="w-full pl-10 pr-4 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-xs font-medium transition-all"
+          className="w-full pl-12 pr-4 py-3 bg-slate-900/50 rounded-2xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm font-medium transition-all text-white placeholder-slate-500"
         />
       </div>
 
       {/* Batches Grid */}
       {loading ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-12 text-center text-xs text-slate-400 font-medium shadow-soft">
+        <div className="dark-panel rounded-3xl p-12 text-center text-sm text-slate-400 font-medium flex items-center justify-center gap-3">
+          <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
           Loading batches...
         </div>
       ) : filteredBatches.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-12 text-center shadow-soft">
-          <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-800">No Batches Found</h3>
-          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+        <div className="dark-panel rounded-3xl p-12 text-center">
+          <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-white">No Batches Found</h3>
+          <p className="text-sm text-slate-400 mt-1 max-w-sm mx-auto">
             Create a batch to easily group and assign exams to multiple students at once.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredBatches.map((batch) => (
-            <div key={batch.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all">
+            <div key={batch.id} className="dark-panel rounded-2xl p-5 hover:shadow-glow hover:-translate-y-1 transition-all duration-300">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">{batch.name}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{batch.description || 'No description'}</p>
+                  <h3 className="text-base font-bold text-white">{batch.name}</h3>
+                  <p className="text-sm text-slate-400 mt-1 line-clamp-2">{batch.description || 'No description'}</p>
                 </div>
-                <div className="flex gap-1 bg-slate-50 rounded-lg p-1 border border-slate-100">
+                <div className="flex gap-1 bg-slate-900/50 rounded-lg p-1 border border-slate-800">
                   <button
                     onClick={() => {
                       setSelectedBatch(batch);
                       setIsModalOpen(true);
                     }}
-                    className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 rounded-md transition-colors"
                   >
-                    <Edit className="w-3.5 h-3.5" />
+                    <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteBatch(batch)}
-                    className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg text-xs font-bold border border-slate-200">
-                  <Users className="w-3.5 h-3.5" />
+              <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-700">
+                  <Users className="w-4 h-4 text-brand-400" />
                   {batch.studentIds?.length || 0} Students
                 </div>
-                <div className="text-[10px] text-slate-400 font-medium">
+                <div className="text-xs text-slate-500 font-mono">
                   {new Date(batch.createdAt).toLocaleDateString()}
                 </div>
               </div>

@@ -4,25 +4,25 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased selection:bg-brand-500 selection:text-white;
+    @apply bg-[#0b0f19] text-slate-300 font-sans antialiased selection:bg-brand-500 selection:text-white;
   }
 }
 
 /* Custom Utilities for Premium Vamsi Academy UI */
-.glass-panel {
-  @apply bg-white/85 backdrop-blur-md border border-slate-200/80 shadow-soft;
+.glass-panel, .dark-panel {
+  @apply bg-[#111827] border border-slate-800 shadow-soft ring-1 ring-white/5;
 }
 
 .glass-dark {
-  @apply bg-navy-800/90 backdrop-blur-md border border-slate-700/50 text-white shadow-card;
+  @apply bg-navy-900/80 border border-white/10 text-white shadow-card ring-1 ring-white/10;
 }
 
 .brand-gradient {
-  @apply bg-gradient-to-r from-brand-700 via-brand-600 to-blue-500 text-white;
+  @apply bg-gradient-to-br from-brand-500 to-indigo-600 text-white shadow-glow;
 }
 
 .brand-gradient-hover {
-  @apply hover:bg-gradient-to-r hover:from-brand-800 hover:via-brand-700 hover:to-blue-600 transition-all duration-300;
+  @apply hover:bg-gradient-to-br hover:from-brand-400 hover:to-indigo-500 hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300;
 }
 
 /* Strict Anti-cheating Utilities */

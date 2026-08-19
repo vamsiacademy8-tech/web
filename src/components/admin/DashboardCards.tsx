@@ -23,31 +23,31 @@ export const DashboardCards: React.FC<MetricProps> = ({
       title: 'Total Tests',
       value: totalTests,
       icon: FileCheck,
-      color: 'bg-blue-500 text-blue-500 bg-blue-50 border-blue-200',
+      color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     },
     {
       title: 'Total Students',
       value: totalStudents,
       icon: Users,
-      color: 'bg-emerald-500 text-emerald-500 bg-emerald-50 border-emerald-200',
+      color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     },
     {
       title: 'Active Tests',
       value: activeTests,
       icon: PlayCircle,
-      color: 'bg-amber-500 text-amber-500 bg-amber-50 border-amber-200',
+      color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     },
     {
       title: 'Completed Tests',
       value: completedTests,
       icon: CheckCircle2,
-      color: 'bg-indigo-500 text-indigo-500 bg-indigo-50 border-indigo-200',
+      color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
     },
     {
       title: 'Recent Attempts',
       value: recentAttemptsCount,
       icon: Clock,
-      color: 'bg-violet-500 text-violet-500 bg-violet-50 border-violet-200',
+      color: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
     },
   ];
 
@@ -58,18 +58,18 @@ export const DashboardCards: React.FC<MetricProps> = ({
         return (
           <div
             key={idx}
-            className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-soft hover:shadow-card transition-shadow"
+            className="dark-panel rounded-3xl p-6 hover:shadow-glow hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-jakarta">
                 {card.title}
               </span>
-              <div className={`p-2.5 rounded-xl border ${card.color.split(' ').slice(2).join(' ')}`}>
+              <div className={`p-2.5 rounded-2xl border shadow-sm ${card.color.split(' ').slice(2).join(' ')}`}>
                 <Icon className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-4">
-              <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="mt-5">
+              <span className="text-4xl font-extrabold text-white tracking-tight font-jakarta">
                 {card.value}
               </span>
             </div>

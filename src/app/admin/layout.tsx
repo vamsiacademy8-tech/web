@@ -26,10 +26,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-sm font-bold text-slate-600">Verifying Admin Permissions...</span>
+          <span className="text-sm font-bold text-slate-300">Verifying Admin Permissions...</span>
         </div>
       </div>
     );
@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <>
-      <div className="flex min-h-screen bg-slate-50 flex-col">
+      <div className="flex min-h-screen bg-transparent flex-col">
         <Navbar title="Admin Control Center" showAdminBadge />
         <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto">
           <AdminSidebar />

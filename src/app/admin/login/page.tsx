@@ -37,33 +37,33 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#0b0f19] flex flex-col relative overflow-hidden">
       <Navbar title="Admin Portal Sign In" />
 
-      <main className="flex-1 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-card border border-slate-200/80 my-8">
+      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+        <div className="max-w-md w-full dark-panel p-8 sm:p-10 my-8">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-brand-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/25">
+            <div className="w-14 h-14 rounded-2xl brand-gradient text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/25">
               <ShieldCheck className="w-8 h-8" />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl font-extrabold text-white tracking-tight font-jakarta">
               Administrator Login
             </h2>
-            <p className="text-sm text-slate-500 mt-1 font-medium">
+            <p className="text-sm text-slate-400 mt-1 font-medium">
               Vamsi Academy Exam Management Portal
             </p>
           </div>
 
           {user && !isAdmin && (
-            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs flex items-center justify-between">
+            <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-400 text-xs flex items-center justify-between">
               <div>
                 <strong className="block font-bold">Currently Signed In as Student:</strong>
-                <span className="font-mono text-slate-700">{user.email}</span>
+                <span className="font-mono text-slate-300">{user.email}</span>
               </div>
               <button
                 type="button"
                 onClick={logout}
-                className="px-3 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-xl transition-colors"
+                className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-bold rounded-xl transition-colors"
               >
                 Sign Out
               </button>
@@ -71,15 +71,15 @@ export default function AdminLoginPage() {
           )}
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-2xl flex items-center gap-2">
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-2xl flex items-center gap-2">
               <AlertCircle className="w-5 h-5 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
                 Admin Email
               </label>
               <input
@@ -88,12 +88,12 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@vamsiacademy.com"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all text-white placeholder-slate-600"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
                 Password
               </label>
               <input
@@ -102,27 +102,27 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm transition-all"
+                className="w-full px-4 py-3.5 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all text-white placeholder-slate-600"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
+              className="w-full py-4 px-4 brand-gradient brand-gradient-hover text-white font-extrabold text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
             >
               <LogIn className="w-4 h-4" />
               {loading ? 'Authenticating...' : 'Access Admin Dashboard'}
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-            <p className="text-sm text-slate-500 font-medium mb-2">
+          <div className="mt-8 pt-6 border-t border-slate-800 text-center">
+            <p className="text-sm text-slate-400 font-medium mb-2">
               Are you a student looking for an exam?
             </p>
             <Link 
               href="/"
-              className="inline-flex items-center text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors underline decoration-brand-600/30 underline-offset-4"
+              className="inline-flex items-center text-sm font-bold text-brand-400 hover:text-brand-300 transition-colors underline decoration-brand-400/30 underline-offset-4"
             >
               Go to Student Login
             </Link>
