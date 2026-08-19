@@ -83,11 +83,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (extractedId) {
         // Find by extracted studentIdCode
-        const q = query(
+        let q = query(
           collection(db, 'students'),
           where('studentIdCode', '==', extractedId)
         );
-        const qSnap = await getDocs(q);
+        let qSnap = await getDocs(q);
+
+        if (qSnap.empty) {
+          q = query(
+            collection(db, 'students'),
+            where('studentIdCode', '==', extractedId.toUpperCase())
+          );
+          qSnap = await getDocs(q);
+        }
+
         if (!qSnap.empty) {
           const docSnap = qSnap.docs[0];
           foundStudent = { ...(docSnap.data() as StudentProfile), id: docSnap.id };
