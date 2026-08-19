@@ -210,8 +210,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // 1. Fetch Student Records from Firestore to verify Admin Pre-Registration
       let preAddedStudent: (StudentProfile & { docId: string }) | null = null;
       try {
-        const q = query(collection(db, 'students'), where('studentIdCode', '==', cleanStudentId));
-        const snap = await getDocs(q);
+        let q = query(collection(db, 'students'), where('studentIdCode', '==', cleanStudentId));
+        let snap = await getDocs(q);
+        
+        if (snap.empty) {
+          // Try uppercase
+          q = query(collection(db, 'students'), where('studentIdCode', '==', cleanStudentId.toUpperCase()));
+          snap = await getDocs(q);
+        }
+        
+        if (snap.empty) {
+          // Try lowercase
+          q = query(collection(db, 'students'), where('studentIdCode', '==', cleanStudentId.toLowerCase()));
+          snap = await getDocs(q);
+        }
         
         if (!snap.empty) {
           const docSnap = snap.docs[0];
