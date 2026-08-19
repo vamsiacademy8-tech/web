@@ -33,15 +33,15 @@ const DateTimeSelect = ({ value, onChange }: { value: string, onChange: (val: st
 
   return (
     <div className="flex gap-1.5 items-center">
-      <input type="date" value={date || ''} onChange={handleDate} className="px-2.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm flex-1 font-medium bg-white" required />
-      <select value={displayHour} onChange={e => handleTime(parseInt(e.target.value, 10), minStr, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-medium bg-white">
+      <input type="date" value={date || ''} onChange={handleDate} className="px-3 py-2.5 rounded-xl border border-slate-800 bg-slate-900/50 focus:border-brand-500 outline-none text-sm flex-1 font-medium text-white placeholder-slate-600" required />
+      <select value={displayHour} onChange={e => handleTime(parseInt(e.target.value, 10), minStr, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-800 bg-slate-900/50 focus:border-brand-500 outline-none text-sm font-medium text-white">
         {Array.from({length: 12}, (_, i) => i + 1).map(h => <option key={h} value={h}>{h.toString().padStart(2, '0')}</option>)}
       </select>
       <span className="font-bold text-slate-400">:</span>
-      <select value={minStr} onChange={e => handleTime(displayHour, e.target.value, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-medium bg-white">
+      <select value={minStr} onChange={e => handleTime(displayHour, e.target.value, ampm)} className="px-2 py-2.5 rounded-xl border border-slate-800 bg-slate-900/50 focus:border-brand-500 outline-none text-sm font-medium text-white">
         {Array.from({length: 60}, (_, i) => i.toString().padStart(2, '0')).map(m => <option key={m} value={m}>{m}</option>)}
       </select>
-      <select value={ampm} onChange={e => handleTime(displayHour, minStr, e.target.value)} className="px-2 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-bold bg-slate-50 text-brand-700">
+      <select value={ampm} onChange={e => handleTime(displayHour, minStr, e.target.value)} className="px-2 py-2.5 rounded-xl border border-slate-800 bg-slate-900/50 focus:border-brand-500 outline-none text-sm font-bold text-brand-400">
         <option value="AM">AM</option>
         <option value="PM">PM</option>
       </select>
@@ -221,20 +221,20 @@ export const TestModal: React.FC<TestModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 animate-fadeIn overflow-y-auto">
+      <div className="dark-panel rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-800 my-8">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+            <div className="p-2 bg-brand-500/10 text-brand-400 rounded-xl">
               <FilePlus2 className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-white font-jakarta">
               {initialData ? 'Edit Examination Test' : 'Create New Test'}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800/50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -242,7 +242,7 @@ export const TestModal: React.FC<TestModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
               Test Name *
             </label>
             <input
@@ -251,12 +251,12 @@ export const TestModal: React.FC<TestModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Mathematics Final Mock Assessment 2026"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm transition-all"
+              className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all text-white placeholder-slate-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
               Description
             </label>
             <textarea
@@ -264,13 +264,13 @@ export const TestModal: React.FC<TestModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Comprehensive test covering Algebra, Calculus, and Trigonometry"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none text-sm transition-all resize-none"
+              className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all resize-none text-white placeholder-slate-600"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
                 Duration (Mins) *
               </label>
               <input
@@ -279,11 +279,11 @@ export const TestModal: React.FC<TestModalProps> = ({
                 min={1}
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm"
+                className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm text-white"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1 flex items-center gap-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1 tracking-wider">
                  Marks per Question
               </label>
               <input
@@ -292,75 +292,73 @@ export const TestModal: React.FC<TestModalProps> = ({
                 min={1}
                 value={marksPerQuestion}
                 onChange={(e) => setMarksPerQuestion(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-mono"
+                className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm font-mono text-white"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1 flex items-center gap-1">
-                <LinkIcon className="w-3.5 h-3.5 text-brand-600" /> Share Code
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 flex items-center gap-1 tracking-wider">
+                <LinkIcon className="w-3.5 h-3.5 text-brand-400" /> Share Code
               </label>
               <input
                 type="text"
                 value={shareCode}
                 onChange={(e) => setShareCode(e.target.value)}
                 placeholder="abc123xyz"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm font-mono"
+                className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm font-mono text-white placeholder-slate-600"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
                 Start Date & Time *
               </label>
               <DateTimeSelect value={startDateTime} onChange={setStartDateTime} />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
                 End Date & Time *
               </label>
               <DateTimeSelect value={endDateTime} onChange={setEndDateTime} />
             </div>
           </div>
 
-
-
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+            <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">
               Test Instructions
             </label>
             <textarea
               rows={3}
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 outline-none text-sm transition-all font-sans"
+              className="w-full px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all font-sans text-white placeholder-slate-600"
             />
           </div>
 
-          <div className="pt-2 border-t border-slate-100">
-            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+          <div className="pt-2 border-t border-slate-800 mt-2">
+            <label className="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">
               Assign Test To:
             </label>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setAssignmentType('all')}
-                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all", assignmentType === 'all' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+                className={cn("flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all", assignmentType === 'all' ? "bg-brand-500/20 text-brand-400 border-brand-500/30" : "bg-slate-900/50 text-slate-400 hover:bg-slate-800/50 border-slate-800")}
               >
                 All Students
               </button>
               <button
                 type="button"
                 onClick={() => setAssignmentType('batches')}
-                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'batches' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+                className={cn("flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'batches' ? "bg-brand-500/20 text-brand-400 border-brand-500/30" : "bg-slate-900/50 text-slate-400 hover:bg-slate-800/50 border-slate-800")}
               >
                 <BookOpen className="w-3.5 h-3.5" /> Specific Batches
               </button>
               <button
                 type="button"
                 onClick={() => setAssignmentType('students')}
-                className={cn("flex-1 py-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'students' ? "bg-brand-600 text-white border-brand-600" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200")}
+                className={cn("flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5", assignmentType === 'students' ? "bg-brand-500/20 text-brand-400 border-brand-500/30" : "bg-slate-900/50 text-slate-400 hover:bg-slate-800/50 border-slate-800")}
               >
                 <Users className="w-3.5 h-3.5" /> Selective Students
               </button>
@@ -374,9 +372,9 @@ export const TestModal: React.FC<TestModalProps> = ({
                 placeholder="Search batches..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand-500 outline-none text-sm transition-all bg-slate-50"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all bg-slate-900/50 text-white placeholder-slate-600"
               />
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
                 {dataLoading ? (
                   <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
                 ) : batches.length === 0 ? (
@@ -387,12 +385,12 @@ export const TestModal: React.FC<TestModalProps> = ({
                     .map((b) => {
                     const isSel = assignedBatchIds.includes(b.id);
                     return (
-                      <div key={b.id} onClick={() => setAssignedBatchIds(prev => isSel ? prev.filter(x => x !== b.id) : [...prev, b.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                      <div key={b.id} onClick={() => setAssignedBatchIds(prev => isSel ? prev.filter(x => x !== b.id) : [...prev, b.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-500/10 border-brand-500/30" : "bg-transparent border-slate-800 hover:border-slate-700")}>
                         <div>
-                          <div className="font-bold text-xs text-slate-800">{b.name}</div>
+                          <div className="font-bold text-xs text-white">{b.name}</div>
                           <div className="text-[10px] text-slate-500">{b.studentIds?.length || 0} students</div>
                         </div>
-                        {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
+                        {isSel && <Check className="w-3.5 h-3.5 text-brand-400" />}
                       </div>
                     );
                   })
@@ -411,9 +409,9 @@ export const TestModal: React.FC<TestModalProps> = ({
                 placeholder="Search students..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-brand-500 outline-none text-sm transition-all bg-slate-50"
+                className="w-full px-4 py-3 rounded-xl border border-slate-800 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 outline-none text-sm transition-all bg-slate-900/50 text-white placeholder-slate-600"
               />
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 max-h-48 overflow-y-auto space-y-1">
                 {dataLoading ? (
                   <div className="text-xs text-center text-slate-400 py-2">Loading...</div>
                 ) : students.length === 0 ? (
@@ -424,12 +422,12 @@ export const TestModal: React.FC<TestModalProps> = ({
                     .map((s) => {
                     const isSel = assignedStudentIds.includes(s.id);
                     return (
-                      <div key={s.id} onClick={() => setAssignedStudentIds(prev => isSel ? prev.filter(x => x !== s.id) : [...prev, s.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-50 border-brand-200" : "bg-white border-slate-100 hover:border-slate-300")}>
+                      <div key={s.id} onClick={() => setAssignedStudentIds(prev => isSel ? prev.filter(x => x !== s.id) : [...prev, s.id])} className={cn("flex items-center justify-between p-2 rounded-lg cursor-pointer border transition-colors", isSel ? "bg-brand-500/10 border-brand-500/30" : "bg-transparent border-slate-800 hover:border-slate-700")}>
                         <div>
-                          <div className="font-bold text-xs text-slate-800">{s.name}</div>
+                          <div className="font-bold text-xs text-white">{s.name}</div>
                           <div className="text-[10px] text-slate-500">{s.studentIdCode || s.email}</div>
                         </div>
-                        {isSel && <Check className="w-3.5 h-3.5 text-brand-600" />}
+                        {isSel && <Check className="w-3.5 h-3.5 text-brand-400" />}
                       </div>
                     );
                   })
@@ -441,18 +439,18 @@ export const TestModal: React.FC<TestModalProps> = ({
             </div>
           )}
 
-          <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+          <div className="pt-4 flex items-center justify-end gap-2 border-t border-slate-800 mt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+              className="px-4 py-2 text-sm font-bold text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 disabled:opacity-50 transition-all flex items-center gap-1.5"
+              className="px-5 py-2 text-sm font-bold text-white brand-gradient brand-gradient-hover rounded-xl shadow-md shadow-brand-500/20 disabled:opacity-50 transition-all flex items-center gap-1.5"
             >
               <Save className="w-4 h-4" />
               {loading ? 'Saving...' : 'Save Test'}

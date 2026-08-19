@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, User, ShieldCheck, GraduationCap } from 'lucide-react';
+import { LogOut, User, ShieldCheck, GraduationCap, Moon, Sun } from 'lucide-react';
 
 interface NavbarProps {
   title?: string;
@@ -12,6 +12,19 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ title, showAdminBadge = false }) => {
   const { user, profile, isAdmin, logout } = useAuth();
+  const [isLightMode, setIsLightMode] = useState(false);
+
+  useEffect(() => {
+    // Check initial state
+    if (document.documentElement.classList.contains('light-theme')) {
+      setIsLightMode(true);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const isLight = document.documentElement.classList.toggle('light-theme');
+    setIsLightMode(isLight);
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full dark-panel border-b-0 border-white/5 rounded-none ring-0 border-b">
@@ -58,6 +71,14 @@ export const Navbar: React.FC<NavbarProps> = ({ title, showAdminBadge = false })
               <div className="w-9 h-9 rounded-full bg-slate-800 text-brand-400 flex items-center justify-center font-bold text-sm border border-slate-700 shadow-sm">
                 {(profile?.name || user.email || 'U')[0].toUpperCase()}
               </div>
+
+              <button
+                title="Toggle Theme"
+                className="p-2 text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition-colors"
+                onClick={toggleTheme}
+              >
+                {isLightMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
 
               <button
                 onClick={logout}
