@@ -143,6 +143,13 @@ export const AntiCheatingWrapper: React.FC<AntiCheatingWrapperProps> = ({
       onViolation('screenshot_attempt', 'Mobile hardware interrupt (possible screenshot or screen recording) detected');
     };
 
+    // 14. Prevent Browser Back Button
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, '', window.location.href);
+      onViolation('visibility_lost', 'Attempted to use browser back navigation to leave the exam');
+    };
+
     // Attach Event Listeners
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('copy', handleCopyCutPaste);
@@ -159,6 +166,7 @@ export const AntiCheatingWrapper: React.FC<AntiCheatingWrapperProps> = ({
     window.addEventListener('orientationchange', handleMobileFocusLoss);
     window.addEventListener('beforeprint', handleBeforePrint);
     window.addEventListener('touchcancel', handleTouchCancel);
+    window.addEventListener('popstate', handlePopState);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     return () => {
@@ -180,6 +188,7 @@ export const AntiCheatingWrapper: React.FC<AntiCheatingWrapperProps> = ({
       window.removeEventListener('pagehide', handleMobileFocusLoss);
       window.removeEventListener('orientationchange', handleMobileFocusLoss);
       window.removeEventListener('beforeprint', handleBeforePrint);
+      window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.body.classList.remove('window-blurred');
     };

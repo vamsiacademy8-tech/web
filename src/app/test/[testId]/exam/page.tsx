@@ -186,8 +186,15 @@ export default function ExamPage() {
           : (loadedAttemptData?.userAnswers || {});
         if (localDraft || loadedAttemptData) {
           setUserAnswers(answersToUse);
-          setViolationsCount(localDraft?.violationsCount || loadedAttemptData?.violationsCount || 0);
-          setViolationLogs(localDraft?.violationLogs || loadedAttemptData?.violationLogs || []);
+          
+          const localViolations = localDraft?.violationsCount || 0;
+          const dbViolations = loadedAttemptData?.violationsCount || 0;
+          setViolationsCount(Math.max(localViolations, dbViolations));
+
+          // Combine violation logs safely
+          const localLogs = localDraft?.violationLogs || [];
+          const dbLogs = loadedAttemptData?.violationLogs || [];
+          setViolationLogs(localLogs.length > dbLogs.length ? localLogs : dbLogs);
         }
 
         // Set Initial Question Index to first unanswered
@@ -262,7 +269,7 @@ export default function ExamPage() {
 
   // Final Exam Submission Handler
   const handleSubmitExam = useCallback(
-    async (isAutoSubmit = false) => {
+    async (submitReason: 'user' | 'auto_violation' | 'auto_timeout' = 'user') => {
       if (isSubmitting || isSubmitted || !test) return;
       setIsSubmitting(true);
 
@@ -270,7 +277,7 @@ export default function ExamPage() {
         const result = calculateScore(questions, userAnswers);
 
         const submittedAt = new Date().toISOString();
-        const finalStatus = isAutoSubmit ? 'auto_submitted' : 'completed';
+        const finalStatus = submitReason === 'auto_violation' ? 'auto_submitted' : submitReason === 'auto_timeout' ? 'timeout_submitted' : 'completed';
 
         await updateDoc(doc(db, 'attempts', attemptId), {
           userAnswers,
@@ -298,10 +305,25 @@ export default function ExamPage() {
     [isSubmitting, isSubmitted, test, questions, userAnswers, testId, user, attemptId, violationsCount, violationLogs]
   );
 
+  // Throttling and Ref for handleViolation
+  const lastViolationTimeRef = useRef<number>(0);
+  const handleSubmitExamRef = useRef(handleSubmitExam);
+
+  useEffect(() => {
+    handleSubmitExamRef.current = handleSubmitExam;
+  }, [handleSubmitExam]);
+
   // Anti-Cheating Violation Callback
   const handleViolation = useCallback(
     (type: ViolationType, details?: string) => {
       if (isSubmitted) return;
+
+      const now = Date.now();
+      // Prevent duplicate flags if multiple events fire at the exact same moment (e.g. blur + visibilitychange)
+      if (now - lastViolationTimeRef.current < 1500) {
+        return;
+      }
+      lastViolationTimeRef.current = now;
 
       const newViolation: AttemptViolation = {
         timestamp: new Date().toISOString(),
@@ -327,7 +349,7 @@ export default function ExamPage() {
         if (newCount >= 10) {
           // Auto submit exam when max violation limit (10) is exceeded
           setTimeout(() => {
-            handleSubmitExam(true);
+            handleSubmitExamRef.current('auto_violation');
           }, 200);
         }
         return newCount;
@@ -336,7 +358,7 @@ export default function ExamPage() {
       setActiveViolationType(type);
       setShowViolationModal(true);
     },
-    [isSubmitted, attemptId, handleSubmitExam]
+    [isSubmitted, attemptId]
   );
 
   // Option Select Handler
@@ -577,7 +599,7 @@ export default function ExamPage() {
   const currentQ = questions[currentIndex];
 
   return (
-    <AntiCheatingWrapper enabled={!isAdmin} onViolation={handleViolation}>
+    <AntiCheatingWrapper enabled={!isSubmitted} onViolation={handleViolation}>
       <WatermarkOverlay
         studentName={profile?.name}
         studentId={(profile as StudentProfile)?.studentIdCode || '100'}
@@ -603,7 +625,7 @@ export default function ExamPage() {
           <div className="flex items-center gap-4">
             <Timer
               initialSeconds={remainingSeconds}
-              onTimeUp={() => handleSubmitExam(true)}
+              onTimeUp={() => handleSubmitExam('auto_timeout')}
             />
           </div>
         </header>
@@ -713,7 +735,7 @@ export default function ExamPage() {
                 <button
                   onClick={() => {
                     if (confirm('Are you sure you want to submit your examination now?')) {
-                      handleSubmitExam(false);
+                      handleSubmitExam('user');
                     }
                   }}
                   disabled={isSubmitting || !userAnswers[currentQ?.id]}

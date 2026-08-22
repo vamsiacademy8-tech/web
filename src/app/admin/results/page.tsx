@@ -278,91 +278,95 @@ export default function AdminResultsPage() {
             No exam attempts found.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-900/50 border-b border-slate-800 text-xs font-bold text-slate-500 uppercase tracking-wider font-jakarta">
-                  <th className="py-4 px-6">Student</th>
-                  <th className="py-4 px-6">Test</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6">Score & %</th>
-                  <th className="py-4 px-6">Breakdown (C / W / S)</th>
-                  <th className="py-4 px-6">Violations</th>
-                  <th className="py-4 px-6 text-right">Details</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 text-sm font-medium">
-                {filteredAttempts.map((attempt) => (
-                  <tr key={attempt.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-4 px-6">
-                      <div className="font-bold text-white">{attempt.studentName}</div>
-                      <div className="text-xs text-slate-500 font-mono mt-0.5">{attempt.studentIdCode || attempt.studentEmail}</div>
-                    </td>
-                    <td className="py-4 px-6 font-bold text-slate-300">
-                      {attempt.testName || 'Test'}
-                    </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${
+          <div className="grid grid-cols-1 gap-4">
+            {filteredAttempts.map((attempt) => (
+              <div key={attempt.id} className="bg-slate-900/40 hover:bg-slate-800/60 border border-slate-800/60 rounded-2xl p-5 transition-all shadow-sm hover:shadow-glow">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-7 gap-4 md:gap-6 items-center">
+                  
+                  {/* Student Info */}
+                  <div className="col-span-2 sm:col-span-1 xl:col-span-1">
+                    <div className="font-bold text-white text-base line-clamp-1">{attempt.studentName}</div>
+                    <div className="text-xs text-slate-500 font-mono mt-0.5">{attempt.studentIdCode || attempt.studentEmail}</div>
+                  </div>
+                  
+                  {/* Test Name */}
+                  <div className="col-span-2 sm:col-span-2 xl:col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Exam</div>
+                    <div className="font-bold text-slate-300 text-sm line-clamp-1">{attempt.testName || 'Test'}</div>
+                  </div>
+
+                  {/* Status */}
+                  <div className="col-span-1 xl:col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Status</div>
+                    <div className="flex flex-col items-start">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${
                           attempt.status === 'completed'
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            : attempt.status === 'timeout_submitted'
+                            ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
                             : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                         }`}
                       >
                         {attempt.status.replace('_', ' ')}
                       </span>
-                    </td>
-                    <td className="py-4 px-6 font-mono font-bold text-sm">
-                      {attempt.result ? (
-                        <span className={attempt.result.passed ? 'text-emerald-400' : 'text-red-400'}>
-                          {attempt.result.score} ({attempt.result.percentage}%)
+                    </div>
+                  </div>
+
+                  {/* Score & Breakdown */}
+                  <div className="col-span-1 xl:col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Score (C/W/S)</div>
+                    {attempt.result ? (
+                      <div className="flex flex-col gap-0.5">
+                        <span className={`font-black text-lg font-mono ${attempt.result.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {attempt.result.score} <span className="text-sm font-bold text-slate-500">({attempt.result.percentage}%)</span>
                         </span>
-                      ) : (
-                        <span className="text-slate-500">N/A</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6 font-mono text-slate-500">
-                      {attempt.result ? (
-                        <span>
-                          <strong className="text-emerald-400">{attempt.result.correct}</strong> /{' '}
-                          <strong className="text-red-400">{attempt.result.wrong}</strong> /{' '}
-                          <strong className="text-slate-500">{attempt.result.skipped}</strong>
-                        </span>
-                      ) : (
-                        '-'
-                      )}
-                    </td>
-                    <td className="py-4 px-6">
-                      {attempt.violationsCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20">
-                          <AlertTriangle className="w-3.5 h-3.5" /> {attempt.violationsCount}
-                        </span>
-                      ) : (
-                        <span className="text-slate-500 font-medium">0</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleResetAttempt(attempt)}
-                          className="py-1.5 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-xs rounded-lg border border-amber-500/20 transition-colors flex items-center gap-1.5"
-                          title="Allow Student to Rewrite Test"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" /> Allow Re-write
-                        </button>
-                        <button
-                          onClick={() => setSelectedAttempt(attempt)}
-                          className="p-2 text-slate-400 hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition-colors"
-                          title="View Detailed Breakdown"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <div className="text-[11px] font-mono font-bold bg-slate-950/50 inline-block px-2 py-0.5 rounded border border-slate-800 w-fit">
+                          <span className="text-emerald-400" title="Correct">{attempt.result.correct}</span><span className="text-slate-600 mx-1">/</span>
+                          <span className="text-red-400" title="Wrong">{attempt.result.wrong}</span><span className="text-slate-600 mx-1">/</span>
+                          <span className="text-slate-400" title="Skipped">{attempt.result.skipped}</span>
+                        </div>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ) : (
+                      <span className="text-slate-500 text-sm font-medium">N/A</span>
+                    )}
+                  </div>
+
+                  {/* Violations */}
+                  <div className="col-span-1 xl:col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Security</div>
+                    <div className="flex flex-col items-start">
+                      {attempt.violationsCount > 0 ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 px-2.5 py-1.5 rounded-lg border border-red-500/20 whitespace-nowrap">
+                          <AlertTriangle className="w-3.5 h-3.5" /> {attempt.violationsCount} Flags
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-500/70 bg-emerald-500/5 px-2.5 py-1.5 rounded-lg border border-emerald-500/10 whitespace-nowrap">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Clean
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-2 sm:col-span-3 xl:col-span-2 flex flex-col sm:flex-row items-center justify-end gap-2 pt-4 xl:pt-0 border-t border-slate-800/60 xl:border-0 w-full">
+                    <button
+                      onClick={() => handleResetAttempt(attempt)}
+                      className="w-full sm:w-auto justify-center py-2 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-xs rounded-xl border border-amber-500/20 transition-all flex items-center gap-2"
+                      title="Allow Student to Rewrite Test"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> Re-write
+                    </button>
+                    <button
+                      onClick={() => setSelectedAttempt(attempt)}
+                      className="w-full sm:w-auto justify-center py-2 px-4 bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 font-bold text-xs rounded-xl border border-brand-500/20 transition-all flex items-center gap-2"
+                      title="View Detailed Breakdown"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

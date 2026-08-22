@@ -223,63 +223,75 @@ export default function AdminDashboardPage() {
             <p className="text-sm font-bold text-slate-400">No test attempts recorded yet.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b-2 border-slate-800 text-xs font-bold text-slate-500 uppercase tracking-wider font-jakarta">
-                  <th className="pb-4 px-4">Student</th>
-                  <th className="pb-4 px-4">Test</th>
-                  <th className="pb-4 px-4">Status</th>
-                  <th className="pb-4 px-4">Score</th>
-                  <th className="pb-4 px-4">Violations</th>
-                  <th className="pb-4 px-4 text-right">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60 text-sm">
-                {recentAttempts.map((attempt) => (
-                  <tr key={attempt.id} className="hover:bg-slate-900/50 transition-colors">
-                    <td className="py-5 px-4">
-                      <div className="font-bold text-slate-200">{attempt.studentName}</div>
-                      <div className="text-xs text-slate-500 font-mono mt-0.5">{attempt.studentIdCode || attempt.studentEmail}</div>
-                    </td>
-                    <td className="py-5 px-4 font-medium text-slate-400">{attempt.testName || 'Examination'}</td>
-                    <td className="py-5 px-4">
+          <div className="grid grid-cols-1 gap-4">
+            {recentAttempts.map((attempt) => (
+              <div key={attempt.id} className="bg-slate-900/40 hover:bg-slate-800/60 border border-slate-800/60 rounded-2xl p-5 transition-all shadow-sm hover:shadow-glow">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6 items-center">
+                  
+                  {/* Student Info */}
+                  <div className="col-span-2 sm:col-span-1">
+                    <div className="font-bold text-slate-200 text-base line-clamp-1">{attempt.studentName}</div>
+                    <div className="text-xs text-slate-500 font-mono mt-0.5">{attempt.studentIdCode || attempt.studentEmail}</div>
+                  </div>
+                  
+                  {/* Test Info */}
+                  <div className="col-span-2 sm:col-span-1 md:col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Examination</div>
+                    <div className="font-medium text-slate-300 text-sm line-clamp-1">{attempt.testName || 'Examination'}</div>
+                  </div>
+
+                  {/* Status & Date */}
+                  <div className="col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Status</div>
+                    <div className="flex flex-col gap-1.5 items-start">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${
                         attempt.status === 'completed'
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                           : attempt.status === 'auto_submitted'
                           ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          : attempt.status === 'timeout_submitted'
+                          ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
                           : 'bg-red-500/10 text-red-400 border-red-500/20'
                       }`}>
                         {attempt.status.replace('_', ' ')}
                       </span>
-                    </td>
-                    <td className="py-5 px-4">
-                      {attempt.result ? (
-                        <>
-                          <span className="font-bold text-emerald-400">{attempt.result.score}</span>
-                          <span className="text-slate-500 text-xs ml-1">({attempt.result.percentage}%)</span>
-                        </>
-                      ) : (
-                        <span className="text-slate-500">In Progress</span>
-                      )}
-                    </td>
-                    <td className="py-5 px-4">
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        {formatDateTime(attempt.startTime)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Score */}
+                  <div className="col-span-1">
+                    <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">Score</div>
+                    {attempt.result ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-black text-emerald-400 text-lg">{attempt.result.score}</span>
+                        <span className="text-slate-500 text-xs font-bold">({attempt.result.percentage}%)</span>
+                      </div>
+                    ) : (
+                      <span className="text-slate-500 text-sm font-medium">In Progress</span>
+                    )}
+                  </div>
+
+                  {/* Violations */}
+                  <div className="col-span-1 flex md:justify-end">
+                    <div className="flex flex-col items-start md:items-end w-full">
+                       <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold md:hidden">Security</div>
                       {attempt.violationsCount > 0 ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400 bg-red-500/10 px-2 py-1 rounded-md border border-red-500/20">
-                          <AlertTriangle className="w-3 h-3" /> {attempt.violationsCount} Flags
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-500/10 px-2.5 py-1.5 rounded-lg border border-red-500/20 whitespace-nowrap">
+                          <AlertTriangle className="w-3.5 h-3.5" /> {attempt.violationsCount} Flags
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-500 font-medium">0 Flags</span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-500/70 bg-emerald-500/5 px-2.5 py-1.5 rounded-lg border border-emerald-500/10 whitespace-nowrap">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Clean
+                        </span>
                       )}
-                    </td>
-                    <td className="py-5 px-4 text-right text-xs text-slate-500 font-mono">
-                      {formatDateTime(attempt.startTime)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

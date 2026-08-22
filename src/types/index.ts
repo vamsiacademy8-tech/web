@@ -97,7 +97,7 @@ export interface AttemptResult {
   passed: boolean;
 }
 
-export type AttemptStatus = 'in_progress' | 'completed' | 'auto_submitted';
+export type AttemptStatus = 'in_progress' | 'completed' | 'auto_submitted' | 'timeout_submitted';
 
 export interface Attempt {
   id: string;
